@@ -1,0 +1,762 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Due Pi Greco — Additive Manufacturing & Stampa 3D industriale</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800;900&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#0f1115; --ink-2:#23272f; --paper:#f3f4f1; --paper-2:#e9eae5;
+    --grey:#878d96; --line:#d9dbd5; --line-2:#2a2f38;
+    --accent:#ec5a24; --accent-2:#ff7a47; --accent-deep:#c8451a;
+    --blueprint:#15233f;
+    --display:'Archivo',sans-serif; --body:'IBM Plex Sans',sans-serif; --mono:'IBM Plex Mono',monospace;
+    --r:14px; --maxw:1200px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth;scrollbar-color:var(--accent) transparent}
+  @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+  body{font-family:var(--body);background:var(--paper);color:var(--ink);line-height:1.55;-webkit-font-smoothing:antialiased;overflow-x:hidden;position:relative}
+  a{color:inherit;text-decoration:none}
+  img{max-width:100%;display:block}
+  ::selection{background:var(--accent);color:#fff}
+  :focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:4px}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:0 24px}
+  section{padding:104px 0;scroll-margin-top:88px;position:relative}
+
+  .grain{position:fixed;inset:0;pointer-events:none;z-index:300;opacity:.04;mix-blend-mode:multiply}
+  .scrollbar{position:fixed;top:0;left:0;height:3px;width:0;background:linear-gradient(90deg,var(--accent),var(--accent-2));z-index:400;transition:width .08s linear}
+
+  .eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--accent);display:inline-flex;align-items:center;gap:10px}
+  .eyebrow::before{content:attr(data-rad);color:var(--grey);font-weight:500}
+  h1,h2,h3{font-family:var(--display);font-weight:800;letter-spacing:-.025em;line-height:1.02}
+
+  .btn{font-family:var(--mono);font-weight:600;font-size:13px;letter-spacing:.04em;text-transform:uppercase;cursor:pointer;border:none;border-radius:999px;padding:14px 26px;display:inline-flex;align-items:center;gap:10px;transition:transform .2s cubic-bezier(.2,.7,.2,1),background .2s,color .2s,box-shadow .2s}
+  .btn svg{width:15px;height:15px;transition:transform .2s}
+  .btn-accent{background:var(--accent);color:#fff;box-shadow:0 8px 24px -10px rgba(236,90,36,.7)}
+  .btn-accent:hover{background:var(--accent-deep);transform:translateY(-2px);box-shadow:0 14px 30px -10px rgba(236,90,36,.8)}
+  .btn-accent:hover svg{transform:translateX(4px)}
+  .btn-ghost{background:transparent;color:var(--ink);border:1.5px solid var(--ink)}
+  .btn-ghost:hover{background:var(--ink);color:#fff;transform:translateY(-2px)}
+  .btn-light{background:#fff;color:var(--ink)}
+  .btn-light:hover{transform:translateY(-2px);box-shadow:0 14px 30px -12px rgba(0,0,0,.4)}
+
+  header{position:sticky;top:0;z-index:60;background:rgba(243,244,241,.82);backdrop-filter:blur(14px);border-bottom:1px solid transparent;transition:border-color .25s,box-shadow .25s}
+  header.scrolled{border-bottom-color:var(--line);box-shadow:0 6px 26px -18px rgba(15,17,21,.5)}
+  .nav{display:flex;align-items:center;justify-content:space-between;height:76px;transition:height .25s}
+  header.scrolled .nav{height:64px}
+  .brand{display:flex;align-items:center;gap:12px}
+  .mark{width:42px;height:42px;border-radius:11px;background:var(--ink);display:grid;place-items:center;color:#fff;font-family:var(--display);font-weight:900;font-size:19px;flex-shrink:0;transition:transform .3s}
+  .brand:hover .mark{transform:rotate(-8deg)}
+  .mark span{color:var(--accent)}
+  .brand b{font-family:var(--display);font-weight:800;font-size:16px;letter-spacing:-.01em;display:block;line-height:1}
+  .brand small{font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--grey)}
+  .menu{display:flex;gap:24px;list-style:none}
+  .menu a{font-size:14.5px;font-weight:500;color:var(--ink-2);position:relative;padding:4px 0}
+  .menu a::after{content:'';position:absolute;left:0;bottom:-2px;width:0;height:2px;background:var(--accent);transition:width .22s}
+  .menu a:hover{color:var(--accent)}.menu a:hover::after{width:100%}
+  .nav-actions{display:flex;align-items:center;gap:12px}
+  .phone{font-family:var(--mono);font-size:13px;font-weight:500;color:var(--ink-2);display:flex;align-items:center;gap:7px;white-space:nowrap}
+  .phone svg{width:15px;height:15px;color:var(--accent)}
+  .burger{display:none;flex-direction:column;gap:5px;background:none;border:none;cursor:pointer;padding:8px}
+  .burger span{width:24px;height:2px;background:var(--ink);display:block;transition:.2s}
+
+  /* language switcher */
+  .lang{position:relative}
+  .lang-btn{display:flex;align-items:center;gap:8px;background:#fff;border:1.5px solid var(--line);border-radius:999px;padding:7px 11px;cursor:pointer;font-family:var(--mono);font-size:12px;font-weight:600;color:var(--ink);transition:border-color .2s}
+  .lang-btn:hover{border-color:var(--accent)}
+  .lang-btn .chev{width:13px;height:13px;color:var(--grey);transition:transform .2s}
+  .lang-btn[aria-expanded="true"] .chev{transform:rotate(180deg)}
+  .flag{width:22px;height:15px;border-radius:3px;overflow:hidden;display:inline-block;box-shadow:0 0 0 1px rgba(15,17,21,.12);flex-shrink:0}
+  .flag svg{width:100%;height:100%;display:block}
+  .lang-menu{position:absolute;right:0;top:calc(100% + 8px);background:#fff;border:1px solid var(--line);border-radius:13px;box-shadow:0 18px 44px -18px rgba(15,17,21,.4);padding:6px;min-width:182px;opacity:0;visibility:hidden;transform:translateY(-6px);transition:.18s;z-index:70}
+  .lang-menu.open{opacity:1;visibility:visible;transform:none}
+  .lang-menu button{display:flex;align-items:center;gap:11px;width:100%;background:none;border:none;cursor:pointer;padding:10px 12px;border-radius:9px;font-family:var(--body);font-size:14.5px;color:var(--ink-2);text-align:left;transition:background .15s}
+  .lang-menu button:hover{background:var(--paper)}
+  .lang-menu button[aria-selected="true"]{color:var(--accent);font-weight:600}
+
+  .hero{padding:78px 0 96px;overflow:hidden}
+  .hero::before{content:'';position:absolute;inset:0;z-index:-1;background:radial-gradient(900px 520px at 78% 30%,rgba(236,90,36,.13),transparent 60%),radial-gradient(700px 500px at 12% 80%,rgba(21,35,63,.10),transparent 55%)}
+  .hero-grid{display:grid;grid-template-columns:1.05fr .95fr;gap:50px;align-items:center}
+  .hero-h1{font-size:clamp(42px,6.2vw,80px);margin:22px 0 0}
+  .hero-h1 span{display:block}
+  .hero-h1 .accent{color:var(--accent)}
+  .lead{font-size:18px;color:var(--ink-2);max-width:520px;margin:26px 0 34px}
+  .hero-cta{display:flex;gap:14px;flex-wrap:wrap}
+  .hero-stats{display:flex;gap:32px;margin-top:56px;flex-wrap:wrap}
+  .stat b{font-family:var(--display);font-size:30px;font-weight:800;display:block;line-height:1;letter-spacing:-.02em}
+  .stat span{font-family:var(--mono);font-size:11px;letter-spacing:.07em;text-transform:uppercase;color:var(--grey)}
+
+  .geo{position:relative;aspect-ratio:1/1;width:100%;max-width:448px;margin-left:auto}
+  .geo svg{width:100%;height:100%;overflow:visible}
+  .spin{transform-origin:250px 250px;animation:spin 28s linear infinite}
+  .spin-rev{transform-origin:250px 250px;animation:spin 44s linear infinite reverse}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  .pulse{animation:pulse 4s ease-in-out infinite}
+  @keyframes pulse{0%,100%{opacity:.5}50%{opacity:1}}
+  @media (prefers-reduced-motion:reduce){.spin,.spin-rev,.pulse{animation:none}}
+  .geo-cap{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);text-align:center;font-family:var(--display)}
+  .geo-cap b{font-size:48px;font-weight:900;display:block;color:var(--ink);letter-spacing:-.03em}
+  .geo-cap b i{font-style:normal;color:var(--accent)}
+  .geo-cap span{font-family:var(--mono);font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--grey)}
+
+  .trust{border-top:1px solid var(--line);border-bottom:1px solid var(--line);background:var(--paper-2);padding:22px 0}
+  .trust-inner{display:flex;align-items:center;gap:34px;flex-wrap:wrap;justify-content:center}
+  .trust-inner .lbl{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--grey)}
+  .trust-inner .pill{font-family:var(--mono);font-size:13px;color:var(--ink-2);display:flex;align-items:center;gap:8px}
+  .trust-inner .dot{width:6px;height:6px;border-radius:50%;background:var(--accent)}
+
+  .sec-head{max-width:690px;margin-bottom:54px}
+  .sec-head h2{font-size:clamp(30px,4vw,46px);margin-top:16px}
+  .sec-head p{color:var(--ink-2);font-size:17px;margin-top:18px}
+
+  .svc-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--line);border:1px solid var(--line);border-radius:var(--r);overflow:hidden}
+  .svc{background:var(--paper);padding:34px 30px;transition:background .22s;position:relative;overflow:hidden}
+  .svc::before{content:'';position:absolute;left:0;top:0;height:3px;width:0;background:var(--accent);transition:width .3s}
+  .svc:hover{background:#fff}.svc:hover::before{width:100%}
+  .svc .num{font-family:var(--mono);font-size:12px;color:var(--accent);letter-spacing:.1em}
+  .svc h3{font-size:21px;margin:18px 0 10px}
+  .svc p{font-size:14.5px;color:var(--ink-2)}
+  .svc .ic{width:40px;height:40px;margin-bottom:6px;color:var(--ink)}
+
+  .why{background:var(--ink);color:var(--paper)}
+  .why::after{content:'';position:absolute;inset:0;background-image:linear-gradient(var(--line-2) 1px,transparent 1px),linear-gradient(90deg,var(--line-2) 1px,transparent 1px);background-size:54px 54px;opacity:.16;pointer-events:none;-webkit-mask-image:radial-gradient(circle at 70% 20%,#000,transparent 70%);mask-image:radial-gradient(circle at 70% 20%,#000,transparent 70%)}
+  .why .wrap{position:relative;z-index:1}
+  .why .sec-head h2{color:#fff}.why .sec-head p{color:#b9bdc4}
+  .why-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:34px 40px}
+  .why-item{display:flex;gap:16px;align-items:flex-start;border-top:1px solid var(--line-2);padding-top:20px}
+  .why-item .ic{width:30px;height:30px;color:var(--accent);flex-shrink:0;margin-top:2px}
+  .why-item h3{font-size:17px;color:#fff;font-weight:700}
+  .why-item p{font-size:14px;color:#9aa0a9;margin-top:6px}
+
+  .sol-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+  .sol{background:#fff;border:1px solid var(--line);border-radius:var(--r);padding:24px 22px;min-height:150px;display:flex;flex-direction:column;justify-content:space-between;transition:.22s;cursor:pointer}
+  .sol:hover{border-color:var(--accent);transform:translateY(-4px);box-shadow:0 18px 40px -26px rgba(236,90,36,.6)}
+  .sol .k{font-family:var(--mono);font-size:11px;color:var(--grey)}
+  .sol h3{font-size:16.5px;line-height:1.18;margin-top:8px}
+  .sol .arr{align-self:flex-end;color:var(--accent);width:20px;height:20px;opacity:0;transform:translateX(-4px);transition:.22s}
+  .sol:hover .arr{opacity:1;transform:translateX(0)}
+
+  .split{display:grid;grid-template-columns:1fr 1fr;gap:24px}
+  .panel{background:#fff;border:1px solid var(--line);border-radius:var(--r);padding:40px 36px}
+  .panel h3{font-size:24px;margin-bottom:6px}
+  .panel .sub{font-family:var(--mono);font-size:12px;color:var(--grey);letter-spacing:.06em;margin-bottom:26px;display:block}
+  .tech-row{display:flex;justify-content:space-between;align-items:center;gap:20px;padding:16px 0;border-top:1px solid var(--line)}
+  .tech-row b{font-family:var(--display);font-size:18px;font-weight:700;flex-shrink:0}
+  .tech-row span{font-size:13.5px;color:var(--ink-2);text-align:right}
+  .tags{display:flex;flex-wrap:wrap;gap:9px;margin-top:6px}
+  .tag{font-family:var(--mono);font-size:12.5px;border:1px solid var(--line);border-radius:999px;padding:8px 15px;color:var(--ink-2);background:var(--paper);transition:.18s}
+  .tag:hover{border-color:var(--accent);color:var(--accent)}
+
+  .finish{background:#0d0f13;color:#f3f4f1;padding-bottom:0}
+  .finish .eyebrow{color:var(--accent)}
+  .finish .sec-head h2{color:#fff}.finish .sec-head p{color:#b9bdc4}
+  .finish-scroll{height:330vh;position:relative}
+  .finish-sticky{position:sticky;top:0;height:100vh;display:flex;align-items:center}
+  .finish-inner{display:grid;grid-template-columns:1.05fr .95fr;gap:48px;align-items:center;width:100%;max-width:var(--maxw);margin:0 auto;padding:0 24px}
+  .finish-stage{position:relative;aspect-ratio:1/1;max-width:480px;width:100%;margin:0 auto;will-change:transform}
+  .finish-stage::after{content:'';position:absolute;inset:8% 8% 4%;background:radial-gradient(closest-side,rgba(236,90,36,.16),transparent 75%);z-index:-1;filter:blur(8px)}
+  .finish-layer{position:absolute;inset:0;display:grid;place-items:center;will-change:opacity}
+  .finish-layer svg{width:84%;height:84%;filter:drop-shadow(0 26px 42px rgba(0,0,0,.55))}
+  .finish-num{font-family:var(--mono);font-size:13px;letter-spacing:.14em;color:var(--accent)}
+  .finish-name{font-size:clamp(28px,4vw,46px);color:#fff;margin:10px 0 14px;font-family:var(--display);font-weight:800;letter-spacing:-.025em}
+  .finish-desc{color:#b9bdc4;font-size:16px;max-width:380px;min-height:50px}
+  .finish-track{list-style:none;margin-top:30px;border-left:1px solid var(--line-2);padding:0}
+  .finish-track button{background:none;border:none;cursor:pointer;font-family:var(--body);color:#7a8089;font-size:15px;padding:12px 0 12px 22px;display:block;position:relative;width:100%;text-align:left;transition:color .2s;margin-left:-1px;border-left:2px solid transparent}
+  .finish-track button i{position:absolute;left:-6px;top:50%;transform:translateY(-50%);width:9px;height:9px;border-radius:50%;background:var(--line-2);transition:.2s}
+  .finish-track button.active{color:#fff;border-left-color:var(--accent)}
+  .finish-track button.active i{background:var(--accent);box-shadow:0 0 0 4px rgba(236,90,36,.18)}
+  .finish-track button:hover{color:#c3c7cd}
+  .finish-hint{font-family:var(--mono);font-size:11px;letter-spacing:.06em;color:#5f656e;margin-top:26px;display:flex;align-items:center;gap:8px}
+  .finish-hint svg{width:14px;height:14px;animation:bob 1.8s ease-in-out infinite}
+  @keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(4px)}}
+  @media (prefers-reduced-motion:reduce){.finish-hint svg{animation:none}}
+
+  .sectors{background:var(--blueprint);color:#fff;overflow:hidden;padding-bottom:104px}
+  .sectors .eyebrow{color:#ffb38c}
+  .sectors h2{color:#fff;font-size:clamp(28px,4vw,44px)}
+  .marquee{overflow:hidden;margin-top:42px;-webkit-mask-image:linear-gradient(90deg,transparent,#000 7%,#000 93%,transparent);mask-image:linear-gradient(90deg,transparent,#000 7%,#000 93%,transparent)}
+  .marquee-track{display:flex;align-items:center;width:max-content;animation:scrollx 40s linear infinite}
+  .marquee:hover .marquee-track{animation-play-state:paused}
+  @keyframes scrollx{to{transform:translateX(-50%)}}
+  .chip{font-family:var(--display);font-weight:800;font-size:clamp(26px,4vw,46px);color:#fff;opacity:.42;white-space:nowrap;padding:0 .18em;letter-spacing:-.02em;transition:opacity .2s,color .2s}
+  .chip:hover{opacity:1;color:#ffb38c}
+  .marquee .dot{color:var(--accent);opacity:.7;font-size:.42em;padding:0 .35em;align-self:center}
+  @media (prefers-reduced-motion:reduce){.marquee-track{animation:none;flex-wrap:wrap;justify-content:center}}
+
+  .blog-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
+  .post{background:#fff;border:1px solid var(--line);border-radius:var(--r);overflow:hidden;transition:.22s;display:flex;flex-direction:column}
+  .post:hover{transform:translateY(-5px);box-shadow:0 22px 48px -28px rgba(15,17,21,.5)}
+  .post .ph{height:152px;background:linear-gradient(135deg,#23272f,var(--blueprint));position:relative;overflow:hidden}
+  .post .ph::after{content:'';position:absolute;inset:0;background:radial-gradient(circle at 30% 40%,rgba(236,90,36,.55),transparent 48%);opacity:.75}
+  .post .ph svg{position:absolute;right:-10px;bottom:-10px;width:120px;height:120px;color:rgba(255,255,255,.08)}
+  .post .body{padding:24px 22px;flex:1;display:flex;flex-direction:column}
+  .post .cat{font-family:var(--mono);font-size:11px;color:var(--accent);letter-spacing:.08em;text-transform:uppercase}
+  .post h3{font-size:18px;margin:12px 0 0;line-height:1.22}
+  .post .more{margin-top:auto;padding-top:18px;font-family:var(--mono);font-size:12.5px;color:var(--ink-2);display:flex;align-items:center;gap:7px;transition:gap .2s,color .2s}
+  .post:hover .more{gap:12px;color:var(--accent)}
+  .post .more svg{width:14px;height:14px}
+
+  .cta-band{position:relative;overflow:hidden;background:linear-gradient(120deg,var(--accent),var(--accent-deep));color:#fff;border-radius:24px;padding:62px 56px;display:flex;justify-content:space-between;align-items:center;gap:30px;flex-wrap:wrap}
+  .cta-band::after{content:'2π';position:absolute;right:6px;bottom:-70px;font-family:var(--display);font-weight:900;font-size:280px;color:rgba(255,255,255,.10);line-height:1;pointer-events:none}
+  .cta-band h2{font-size:clamp(28px,4vw,42px);color:#fff;max-width:560px;position:relative}
+  .cta-band p{font-family:var(--mono);font-size:13px;margin-top:12px;color:#ffe2d6;position:relative}
+  .cta-band .btn{position:relative}
+
+  footer{background:var(--ink);color:#c3c7cd;padding:74px 0 30px}
+  .foot-grid{display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr;gap:40px;padding-bottom:50px;border-bottom:1px solid var(--line-2)}
+  .foot-col h4{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:#7a8089;margin-bottom:18px}
+  .foot-col ul{list-style:none}.foot-col li{margin-bottom:11px}
+  .foot-col a{font-size:14px;color:#c3c7cd;transition:color .15s}.foot-col a:hover{color:var(--accent)}
+  .foot-brand .mark{margin-bottom:18px}
+  .foot-brand p{font-size:14px;color:#9aa0a9;max-width:300px}
+  .foot-contact{font-family:var(--mono);font-size:13px;color:#c3c7cd;margin-top:16px;line-height:1.9}
+  .foot-contact a:hover{color:var(--accent)}
+  .foot-bottom{display:flex;justify-content:space-between;align-items:center;padding-top:26px;flex-wrap:wrap;gap:14px}
+  .foot-bottom small{font-family:var(--mono);font-size:11.5px;color:#7a8089}
+  .foot-bottom small a:hover{color:var(--accent)}
+  .socials{display:flex;gap:10px}
+  .socials a{width:36px;height:36px;border:1px solid var(--line-2);border-radius:9px;display:grid;place-items:center;color:#c3c7cd;transition:.18s}
+  .socials a:hover{background:var(--accent);border-color:var(--accent);color:#fff;transform:translateY(-2px)}
+  .socials svg{width:16px;height:16px}
+
+  .overlay{position:fixed;inset:0;background:rgba(15,17,21,.64);backdrop-filter:blur(5px);z-index:100;display:none;align-items:center;justify-content:center;padding:24px}
+  .overlay.open{display:flex}
+  .modal{background:var(--paper);width:100%;max-width:620px;border-radius:20px;overflow:hidden;position:relative;max-height:92vh;display:flex;flex-direction:column;animation:pop .3s cubic-bezier(.2,.7,.2,1)}
+  @keyframes pop{from{opacity:0;transform:translateY(14px) scale(.98)}to{opacity:1;transform:none}}
+  .modal-head{padding:30px 34px 22px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:flex-start;gap:20px}
+  .modal-head h3{font-size:23px}
+  .modal-head p{font-size:13.5px;color:var(--ink-2);margin-top:8px;max-width:400px}
+  .close-x{background:none;border:1px solid var(--line);border-radius:9px;width:38px;height:38px;cursor:pointer;display:grid;place-items:center;flex-shrink:0;transition:.15s}
+  .close-x:hover{background:var(--ink);color:#fff}.close-x svg{width:16px;height:16px}
+  .modal-body{padding:28px 34px 12px;overflow-y:auto}
+  .step{display:none}.step.active{display:block;animation:fade .3s ease}
+  @keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+  .choice{width:100%;text-align:left;background:#fff;border:1.5px solid var(--line);border-radius:var(--r);padding:22px 24px;display:flex;justify-content:space-between;align-items:center;cursor:pointer;margin-bottom:14px;transition:.18s;font-family:var(--body)}
+  .choice:hover{border-color:var(--accent);transform:translateX(4px)}
+  .choice b{font-family:var(--display);font-size:17px;display:block}
+  .choice small{font-size:13px;color:var(--ink-2)}
+  .choice svg{width:20px;height:20px;color:var(--accent);flex-shrink:0}
+  .field{margin-bottom:18px}
+  .field label{font-family:var(--mono);font-size:12px;letter-spacing:.04em;text-transform:uppercase;color:var(--ink-2);display:block;margin-bottom:8px}
+  .field input,.field select,.field textarea{width:100%;font-family:var(--body);font-size:15px;padding:13px 15px;border:1.5px solid var(--line);border-radius:10px;background:#fff;color:var(--ink)}
+  .field input:focus,.field select:focus,.field textarea:focus{outline:none;border-color:var(--accent)}
+  .dropzone{border:1.6px dashed var(--grey);border-radius:var(--r);padding:30px;text-align:center;cursor:pointer;background:#fff;transition:.18s}
+  .dropzone:hover{border-color:var(--accent)}
+  .dropzone svg{width:34px;height:34px;color:var(--accent);margin:0 auto 12px}
+  .dropzone b{font-family:var(--display);font-size:16px;display:block}
+  .dropzone small{font-size:12.5px;color:var(--grey);font-family:var(--mono)}
+  .dropzone.filled{border-style:solid;border-color:var(--accent)}
+  .sizes{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:8px}
+  .size-opt{border:1.5px solid var(--line);border-radius:10px;padding:14px 10px;text-align:center;cursor:pointer;background:#fff;transition:.15s}
+  .size-opt:hover{border-color:var(--accent)}
+  .size-opt.sel{border-color:var(--accent);background:#fff5f1}
+  .size-opt b{font-family:var(--display);font-size:18px;display:block}
+  .size-opt span{font-family:var(--mono);font-size:10.5px;color:var(--grey);text-transform:uppercase;letter-spacing:.06em}
+  .two{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  .modal-foot{display:flex;justify-content:space-between;align-items:center;margin-top:8px}
+  .back-link{font-family:var(--mono);font-size:13px;color:var(--ink-2);background:none;border:none;cursor:pointer;display:flex;align-items:center;gap:7px}
+  .back-link:hover{color:var(--accent)}.back-link svg{width:14px;height:14px}
+  .progress{display:flex;align-items:center;gap:12px}
+  .progress svg{width:34px;height:34px;transform:rotate(-90deg)}
+  .progress .track{fill:none;stroke:var(--line);stroke-width:4}
+  .progress .fill{fill:none;stroke:var(--accent);stroke-width:4;stroke-linecap:round;transition:stroke-dashoffset .4s ease}
+  .progress span{font-family:var(--mono);font-size:11px;color:var(--grey)}
+  .modal-prog{padding:14px 34px 24px;display:flex;justify-content:flex-end}
+  .done{text-align:center;padding:20px 0}
+  .done .check{width:64px;height:64px;border-radius:50%;background:#fff5f1;display:grid;place-items:center;margin:0 auto 18px}
+  .done .check svg{width:30px;height:30px;color:var(--accent)}
+  .done h3{font-size:24px;margin-bottom:10px}
+  .done p{font-size:15px;color:var(--ink-2);max-width:380px;margin:0 auto}
+
+  .az-grid{display:grid;grid-template-columns:1.1fr .9fr;gap:48px;align-items:center}
+  .az-panel{background:var(--ink);color:#fff;border-radius:var(--r);padding:34px 36px}
+  .az-panel .swg{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:#ffb38c;border:1px solid var(--line-2);border-radius:999px;padding:6px 13px;display:inline-block;margin-bottom:20px}
+  .az-fact{display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--line-2);padding:16px 0}
+  .az-fact b{font-family:var(--display);font-size:22px;letter-spacing:-.02em}
+  .az-fact span{font-family:var(--mono);font-size:12px;color:#9aa0a9}
+  .contact{background:var(--paper-2)}
+  .contact-grid{display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:stretch}
+  .contact-info .row{display:flex;gap:14px;padding:16px 0;border-top:1px solid var(--line)}
+  .contact-info .row:first-child{border-top:none;padding-top:0}
+  .contact-info .ic{width:20px;height:20px;color:var(--accent);flex-shrink:0;margin-top:3px}
+  .contact-info .lbl{font-family:var(--mono);font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:var(--grey)}
+  .contact-info .val{font-size:15px;color:var(--ink)}
+  .contact-info .val a{color:inherit}.contact-info .val a:hover{color:var(--accent)}
+  .contact-cta{display:flex;gap:12px;flex-wrap:wrap;margin-top:26px}
+  .contact-map{border-radius:var(--r);overflow:hidden;border:1px solid var(--line);min-height:330px}
+  .contact-map iframe{width:100%;height:100%;min-height:330px;border:0;display:block}
+  @media(max-width:980px){.az-grid,.contact-grid{grid-template-columns:1fr;gap:28px}}
+
+  .reveal{opacity:0;transform:translateY(26px);filter:blur(6px);transition:opacity .7s cubic-bezier(.2,.7,.2,1),transform .7s cubic-bezier(.2,.7,.2,1),filter .7s}
+  .reveal.in{opacity:1;transform:none;filter:none}
+  [data-rise]{opacity:0;transform:translateY(22px)}
+  body.loaded [data-rise]{opacity:1;transform:none;transition:opacity .8s cubic-bezier(.2,.7,.2,1),transform .8s cubic-bezier(.2,.7,.2,1)}
+  body.loaded [data-rise="1"]{transition-delay:.05s}
+  body.loaded [data-rise="2"]{transition-delay:.13s}
+  body.loaded [data-rise="3"]{transition-delay:.21s}
+  body.loaded [data-rise="4"]{transition-delay:.30s}
+  body.loaded [data-rise="5"]{transition-delay:.40s}
+  body.loaded [data-rise="6"]{transition-delay:.52s}
+  @media (prefers-reduced-motion:reduce){.reveal,[data-rise]{opacity:1;transform:none;filter:none;transition:none}}
+
+  @media (max-width:980px){
+    .menu,.phone{display:none}
+    .burger{display:flex}
+    .hero-grid{grid-template-columns:1fr;gap:40px}
+    .geo{max-width:330px;margin:0 auto}
+    .svc-grid,.why-grid,.sol-grid{grid-template-columns:1fr 1fr}
+    .split,.blog-grid{grid-template-columns:1fr}
+    .foot-grid{grid-template-columns:1fr 1fr;gap:34px}
+    .finish-inner{grid-template-columns:1fr;gap:22px}
+    .finish-stage{max-width:280px}
+    .finish-scroll{height:280vh}
+  }
+  @media (max-width:560px){
+    section{padding:66px 0}
+    .svc-grid,.why-grid,.sol-grid{grid-template-columns:1fr}
+    .foot-grid{grid-template-columns:1fr}
+    .cta-band{padding:40px 30px}
+    .two{grid-template-columns:1fr}
+    .modal-head,.modal-body,.modal-prog{padding-left:24px;padding-right:24px}
+    .nav-actions>.btn-accent{display:none}
+  }
+  .mobile-menu{display:none;background:var(--paper);border-bottom:1px solid var(--line);padding:14px 24px 22px}
+  .mobile-menu.open{display:block}
+  .mobile-menu a{display:block;padding:11px 0;font-size:16px;border-bottom:1px solid var(--line)}
+  .mobile-menu .btn{margin-top:16px;width:100%;justify-content:center}
+</style>
+</head>
+<body>
+<svg class="grain"><filter id="n"><feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="3"/></filter><rect width="100%" height="100%" filter="url(#n)"/></svg>
+<div class="scrollbar" id="scrollbar"></div>
+
+<header id="header">
+  <div class="wrap nav">
+    <a href="#" class="brand" aria-label="Due Pi Greco"><div class="mark">2<span>π</span></div><div><b>DUE PI GRECO</b><small>Additive Manufacturing</small></div></a>
+    <nav>
+      <ul class="menu">
+        <li><a href="#azienda" data-i18n="nav_az">Azienda</a></li>
+        <li><a href="#servizi" data-i18n="nav_serv">Servizi</a></li>
+        <li><a href="#tecnologie" data-i18n="nav_tech">Tecnologie</a></li>
+        <li><a href="#soluzioni" data-i18n="nav_sol">Soluzioni</a></li>
+        <li><a href="#settori" data-i18n="nav_sect">Settori</a></li>
+        <li><a href="#blog" data-i18n="nav_blog">Blog</a></li>
+        <li><a href="#contatti" data-i18n="nav_cont">Contatti</a></li>
+      </ul>
+    </nav>
+    <div class="nav-actions">
+      <a class="phone" href="tel:+390423715172"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.81.36 1.6.7 2.34a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.74-1.74a2 2 0 0 1 2.11-.45c.74.34 1.53.57 2.34.7A2 2 0 0 1 22 16.92z"/></svg>0423 715172</a>
+      <div class="lang">
+        <button class="lang-btn" id="langBtn" aria-haspopup="listbox" aria-expanded="false"><span class="flag" id="langFlag"></span><span id="langCode">IT</span><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg></button>
+        <div class="lang-menu" id="langMenu" role="listbox"></div>
+      </div>
+      <button class="btn btn-accent" onclick="openModal()" data-i18n="cta_quote">Richiedi preventivo</button>
+      <button class="burger" id="burger" aria-label="Menu"><span></span><span></span><span></span></button>
+    </div>
+  </div>
+  <div class="mobile-menu" id="mobileMenu">
+    <a href="#azienda" data-i18n="nav_az">Azienda</a><a href="#servizi" data-i18n="nav_serv">Servizi</a><a href="#tecnologie" data-i18n="nav_tech">Tecnologie</a><a href="#materiali" data-i18n="nav_mat">Materiali</a><a href="#finitura" data-i18n="nav_fin">Finitura</a><a href="#soluzioni" data-i18n="nav_sol">Soluzioni</a><a href="#settori" data-i18n="nav_sect">Settori</a><a href="#blog" data-i18n="nav_blog">Blog</a><a href="#contatti" data-i18n="nav_cont">Contatti</a>
+    <button class="btn btn-accent" onclick="openModal()" data-i18n="cta_quote">Richiedi preventivo</button>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="wrap hero-grid">
+    <div>
+      <span class="eyebrow" data-rad="0" data-rise="1" data-i18n="hero_ey">Service provider · dal 2010</span>
+      <h1 class="hero-h1"><span data-rise="2" data-i18n="hero_h1a">Le tue idee diventano</span><span class="accent" data-rise="3" data-i18n="hero_h1b">componenti funzionali.</span></h1>
+      <p class="lead" data-rise="4" data-i18n="hero_lead">Design, ingegnerizzazione e additive manufacturing ad alte prestazioni. Dal progetto al prototipo, fino alla produzione di parti e componenti certificati — tutto nella nostra Digital Factory.</p>
+      <div class="hero-cta" data-rise="5">
+        <button class="btn btn-accent" onclick="openModal()"><span data-i18n="cta_quote">Richiedi preventivo</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
+        <a class="btn btn-ghost" href="#tecnologie" data-i18n="hero_cta2">Esplora le tecnologie</a>
+      </div>
+      <div class="hero-stats" data-rise="6">
+        <div class="stat"><b>2010</b><span data-i18n="st_found">Anno di fondazione</span></div>
+        <div class="stat"><b data-count="1300" data-suffix=" m²">1.300 m²</b><span data-i18n="st_factory">Digital Factory</span></div>
+        <div class="stat"><b>FDM · SLS</b><span data-i18n="st_sys">Sistemi industriali</span></div>
+        <div class="stat"><b data-count="360" data-suffix="°">360°</b><span data-i18n="st_dev">Sviluppo prodotto</span></div>
+      </div>
+    </div>
+    <div data-rise="4">
+      <div class="geo">
+        <svg viewBox="0 0 500 500" aria-hidden="true">
+          <circle class="pulse" cx="250" cy="250" r="218" fill="none" stroke="var(--accent)" stroke-opacity=".25" stroke-width="1"/>
+          <circle cx="250" cy="250" r="200" fill="none" stroke="var(--line)" stroke-width="1.5"/>
+          <g class="spin"><circle cx="250" cy="250" r="200" fill="none" stroke="var(--accent)" stroke-width="3" stroke-dasharray="940 1257" stroke-linecap="round"/><circle cx="450" cy="250" r="9" fill="var(--accent)"/></g>
+          <g class="spin-rev"><circle cx="250" cy="250" r="150" fill="none" stroke="var(--blueprint)" stroke-width="1.5" stroke-dasharray="6 10"/><circle cx="250" cy="100" r="6" fill="var(--blueprint)"/></g>
+          <circle cx="250" cy="250" r="100" fill="none" stroke="var(--line)" stroke-width="1.5"/>
+          <g stroke="var(--grey)" stroke-width="1.5"><line x1="250" y1="40" x2="250" y2="62"/><line x1="460" y1="250" x2="438" y2="250"/><line x1="250" y1="460" x2="250" y2="438"/><line x1="40" y1="250" x2="62" y2="250"/></g>
+        </svg>
+        <div class="geo-cap"><b>2<i>π</i></b><span>= 6,28318…</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="trust">
+  <div class="wrap trust-inner">
+    <span class="lbl" data-i18n="trust_lbl">Su cui contano i nostri clienti</span>
+    <span class="pill"><i class="dot"></i><span data-i18n="trust_1">Parco macchine di proprietà</span></span>
+    <span class="pill"><i class="dot"></i><span data-i18n="trust_2">Sistemi industriali Stratasys</span></span>
+    <span class="pill"><i class="dot"></i><span data-i18n="trust_3">Materiali certificati · ISO 10993</span></span>
+    <span class="pill"><i class="dot"></i><span data-i18n="trust_4">Officina Industria 4.0</span></span>
+  </div>
+</div>
+
+<section id="servizi">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <span class="eyebrow" data-rad="π/4" data-i18n="svc_ey">Cosa facciamo</span>
+      <h2 data-i18n="svc_h2">Un unico partner, dal disegno al pezzo finito.</h2>
+      <p data-i18n="svc_p">Una metodologia multidisciplinare che integra in modo organico tutte le fasi: design, progettazione, ingegnerizzazione, prototipazione e produzione additiva.</p>
+    </div>
+    <div class="svc-grid reveal">
+      <div class="svc"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 2 2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg><div class="num">01</div><h3 data-i18n="svc1_t">Industrial & Product Design</h3><p data-i18n="svc1_d">Diamo forma a soluzioni concrete, funzionali ed esteticamente curate, dal concept all'aspetto finale del prodotto.</p></div>
+      <div class="svc"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg><div class="num">02</div><h3 data-i18n="svc2_t">Ingegnerizzazione</h3><p data-i18n="svc2_d">Trasformiamo il progetto in un componente producibile: analisi funzionale, scelta dei materiali e ottimizzazione del processo.</p></div>
+      <div class="svc"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="3"/><path d="M12 1v6m0 10v6M4.2 4.2l4.3 4.3m7 7 4.3 4.3M1 12h6m10 0h6M4.2 19.8l4.3-4.3m7-7 4.3-4.3"/></svg><div class="num">03</div><h3 data-i18n="svc3_t">DfAM</h3><p data-i18n="svc3_d">Design for Additive Manufacturing: riprogettiamo il pezzo per sfruttare al massimo i vantaggi della stampa 3D.</p></div>
+      <div class="svc"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg><div class="num">04</div><h3 data-i18n="svc4_t">Additive Manufacturing</h3><p data-i18n="svc4_d">Stampa 3D industriale di prototipi e componenti funzionali con sistemi FDM e SLS, direttamente in azienda.</p></div>
+      <div class="svc"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 19l7-7 3 3-7 7-3-3zM18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5zM2 2l7.586 7.586"/><circle cx="11" cy="11" r="2"/></svg><div class="num">05</div><h3 data-i18n="svc5_t">Finitura & post-produzione</h3><p data-i18n="svc5_d">Sabbiatura, levigatura e verniciatura di alta qualità, anche biocompatibile, per superfici pronte all'uso.</p></div>
+      <div class="svc"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg><div class="num">06</div><h3 data-i18n="svc6_t">Consulenza tecnica</h3><p data-i18n="svc6_d">Ti affianchiamo nella scelta di tecnologia, materiale e strategia produttiva più adatta alla tua applicazione.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="why">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <span class="eyebrow" data-rad="π/2" data-i18n="why_ey">Perché Due Pi Greco</span>
+      <h2 data-i18n="why_h2">Pensa alle soluzioni. Non agli ostacoli.</h2>
+      <p data-i18n="why_p">Senza costi di avviamento, con alta durabilità e tempi di produzione rapidi, puoi progettare le soluzioni migliori. Non solo quelle possibili.</p>
+    </div>
+    <div class="why-grid reveal">
+      <div class="why-item"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M9 22V12h6v10"/></svg><div><h3 data-i18n="why1_t">Parco macchine di proprietà</h3><p data-i18n="why1_d">Le stampanti sono in azienda: controlliamo l'intero processo, dalla qualità ai tempi.</p></div></div>
+      <div class="why-item"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg><div><h3 data-i18n="why2_t">Tempi di produzione rapidi</h3><p data-i18n="why2_d">Cicli di sviluppo brevi senza mai sacrificare la qualità del componente.</p></div></div>
+      <div class="why-item"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="M22 4 12 14.01l-3-3"/></svg><div><h3 data-i18n="why3_t">Materiali certificati</h3><p data-i18n="why3_d">Funzionali e affidabili, fino a polimeri biocompatibili certificati ISO 10993.</p></div></div>
+      <div class="why-item"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8m-4-4v4"/></svg><div><h3 data-i18n="why4_t">Digital Factory 4.0</h3><p data-i18n="why4_d">Un'officina in ottica Industria 4.0, con attrezzature per finitura e assemblaggio.</p></div></div>
+      <div class="why-item"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg><div><h3 data-i18n="why5_t">Team multidisciplinare</h3><p data-i18n="why5_d">Designer, ingegneri e tecnici che lavorano insieme su ogni progetto.</p></div></div>
+      <div class="why-item"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg><div><h3 data-i18n="why6_t">Partner OEM a 360°</h3><p data-i18n="why6_d">Ti seguiamo lungo l'intero sviluppo del prodotto, da zero al componente finale.</p></div></div>
+    </div>
+  </div>
+</section>
+
+<section id="soluzioni">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <span class="eyebrow" data-rad="3π/4" data-i18n="sol_ey">Soluzioni</span>
+      <h2 data-i18n="sol_h2">Cosa possiamo fare per te.</h2>
+      <p data-i18n="sol_p">Scopri come l'additive manufacturing può rispondere a esigenze concrete di prodotto e produzione.</p>
+    </div>
+    <div class="sol-grid reveal">
+      <div class="sol"><div><div class="k">/01</div><h3 data-i18n="sol1">Prototipazione rapida</h3></div><svg class="arr" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>
+      <div class="sol"><div><div class="k">/02</div><h3 data-i18n="sol2">Riduci il time-to-market</h3></div><svg class="arr" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>
+      <div class="sol"><div><div class="k">/03</div><h3 data-i18n="sol3">Componenti funzionali certificati</h3></div><svg class="arr" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>
+      <div class="sol"><div><div class="k">/04</div><h3 data-i18n="sol4">Geometrie complesse</h3></div><svg class="arr" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>
+      <div class="sol"><div><div class="k">/05</div><h3 data-i18n="sol5">Alleggerimento delle parti</h3></div><svg class="arr" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>
+      <div class="sol"><div><div class="k">/06</div><h3 data-i18n="sol6">Attrezzature e utensili</h3></div><svg class="arr" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>
+      <div class="sol"><div><div class="k">/07</div><h3 data-i18n="sol7">Piccole e medie serie</h3></div><svg class="arr" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>
+      <div class="sol"><div><div class="k">/08</div><h3 data-i18n="sol8">Nessun costo di avviamento</h3></div><svg class="arr" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>
+    </div>
+  </div>
+</section>
+
+<section id="tecnologie" style="padding-bottom:52px">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <span class="eyebrow" data-rad="π" data-i18n="tm_ey">Tecnologie & Materiali</span>
+      <h2 data-i18n="tm_h2">Il processo giusto per ogni applicazione.</h2>
+    </div>
+    <div class="split reveal">
+      <div class="panel">
+        <h3 data-i18n="tech_t">Tecnologie</h3><span class="sub" data-i18n="tech_sub">// processi di stampa industriali</span>
+        <div class="tech-row"><b>FDM</b><span data-i18n="tech_fdm_d">Fused Deposition Modeling — sistemi Stratasys Fortus per polimeri tecnici ad alte prestazioni.</span></div>
+        <div class="tech-row"><b>SLS</b><span data-i18n="tech_sls_d">Sinterizzazione laser selettiva — geometrie complesse e ottime proprietà meccaniche, senza supporti.</span></div>
+        <div class="tech-row"><b data-i18n="tech_fin">Finitura</b><span data-i18n="tech_fin_d">Sabbiatura, levigatura, tintura e verniciatura biocompatibile.</span></div>
+      </div>
+      <div class="panel" id="materiali">
+        <h3 data-i18n="mat_t">Materiali</h3><span class="sub" data-i18n="mat_sub">// una selezione dei polimeri disponibili</span>
+        <div class="tags"><span class="tag" data-i18n="mat_bio">PC biocompatibile</span><span class="tag">ULTEM 9085</span><span class="tag">ULTEM 1010</span><span class="tag">ABS-M30</span><span class="tag">ASA</span><span class="tag">Nylon 12</span><span class="tag">Nylon 12 CF</span><span class="tag">TPU 92A</span><span class="tag">PC-ISO</span><span class="tag">ST-130</span></div>
+        <p style="font-size:13.5px;color:var(--ink-2);margin-top:22px" data-i18n="mat_note">Non trovi il materiale che ti serve? Raccontaci l'applicazione: troviamo la soluzione su misura.</p>
+        <button class="btn btn-ghost" style="margin-top:18px" onclick="openModal()" data-i18n="mat_btn">Parla con un tecnico</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="finitura" class="finish">
+  <div class="wrap">
+    <div class="sec-head reveal" style="margin-bottom:8px">
+      <span class="eyebrow" data-rad="9π/8" data-i18n="fin_ey">Post-produzione</span>
+      <h2 data-i18n="fin_h2">Rendi i pezzi unici.</h2>
+      <p data-i18n="fin_p">Lo stesso componente attraversa le nostre fasi di finitura. Scorri e guardalo passare dal grezzo al verniciato.</p>
+    </div>
+  </div>
+  <div class="finish-scroll" id="finishScroll">
+    <div class="finish-sticky">
+      <div class="finish-inner">
+        <div class="finish-stage" id="finishStage" aria-hidden="true"></div>
+        <div class="finish-ui">
+          <div class="finish-num"><span id="finishNum">01</span> / 05</div>
+          <h3 class="finish-name" id="finishName">Grezzo</h3>
+          <p class="finish-desc" id="finishDesc">Il pezzo come esce dalla stampa, con le linee di deposizione ancora visibili.</p>
+          <ol class="finish-track" id="finishTrack">
+            <li><button data-i="0" class="active"><i></i><span data-i18n="fin_n0">Grezzo</span></button></li>
+            <li><button data-i="1"><i></i><span data-i18n="fin_n1">Nero con additivi</span></button></li>
+            <li><button data-i="2"><i></i><span data-i18n="fin_n2">Nero</span></button></li>
+            <li><button data-i="3"><i></i><span data-i18n="fin_n3">Nero lucidato</span></button></li>
+            <li><button data-i="4"><i></i><span data-i18n="fin_n4">Verniciato</span></button></li>
+          </ol>
+          <div class="finish-hint"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M6 13l6 6 6-6"/></svg><span data-i18n="fin_hint">scorri per cambiare finitura</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="settori" class="sectors">
+  <div class="wrap">
+    <div class="sec-head reveal" style="margin-bottom:0">
+      <span class="eyebrow" data-rad="5π/4" data-i18n="sect_ey">Settori</span>
+      <h2 data-i18n="sect_h2">Forniamo parti ai leader dell'industria.</h2>
+    </div>
+  </div>
+  <div class="marquee">
+    <div class="marquee-track">
+      <span class="chip" data-i18n="sect_1">Automotive</span><span class="dot">●</span><span class="chip" data-i18n="sect_2">Aerospace</span><span class="dot">●</span><span class="chip" data-i18n="sect_3">Medicale</span><span class="dot">●</span><span class="chip" data-i18n="sect_4">Macchinari & impianti</span><span class="dot">●</span><span class="chip" data-i18n="sect_5">Industrial design</span><span class="dot">●</span><span class="chip" data-i18n="sect_6">Robotica</span><span class="dot">●</span><span class="chip" data-i18n="sect_7">Beni di consumo</span><span class="dot">●</span>
+      <span class="chip" data-i18n="sect_1">Automotive</span><span class="dot">●</span><span class="chip" data-i18n="sect_2">Aerospace</span><span class="dot">●</span><span class="chip" data-i18n="sect_3">Medicale</span><span class="dot">●</span><span class="chip" data-i18n="sect_4">Macchinari & impianti</span><span class="dot">●</span><span class="chip" data-i18n="sect_5">Industrial design</span><span class="dot">●</span><span class="chip" data-i18n="sect_6">Robotica</span><span class="dot">●</span><span class="chip" data-i18n="sect_7">Beni di consumo</span><span class="dot">●</span>
+    </div>
+  </div>
+</section>
+
+<section id="blog">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <span class="eyebrow" data-rad="3π/2" data-i18n="blog_ey">Dal blog</span>
+      <h2 data-i18n="blog_h2">Approfondimenti dal nostro laboratorio.</h2>
+    </div>
+    <div class="blog-grid reveal">
+      <a class="post" href="https://duepigreco3d.it/en/surface-finishing-techniques-in-3d-printing-enhancing-printed-parts-at-due-pi-greco/" target="_blank" rel="noopener"><div class="ph"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"><path d="M12 19l7-7 3 3-7 7-3-3zM18 13l-1.5-7.5L2 2l3.5 14.5L13 18z"/></svg></div><div class="body"><span class="cat" data-i18n="blog1_c">Post-produzione</span><h3 data-i18n="blog1_t">Tecniche di finitura superficiale: migliorare le parti stampate in 3D</h3><span class="more"><span data-i18n="blog_more">Leggi l'articolo</span> <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></div></a>
+      <a class="post" href="https://duepigreco3d.it/en/duepigreco-and-tecnologia-design-unite-introducing-a-new-italian-center-of-technological-excellence-for-additive-manufacturing-under-the-duepigreco-brand-2/" target="_blank" rel="noopener"><div class="ph"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg></div><div class="body"><span class="cat" data-i18n="blog2_c">Novità</span><h3 data-i18n="blog2_t">Due Pi Greco entra nel SolidWorld Group: nasce un nuovo Polo Tecnologico</h3><span class="more"><span data-i18n="blog_more">Leggi l'articolo</span> <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></div></a>
+      <a class="post" href="https://duepigreco3d.it/category/news/" target="_blank" rel="noopener"><div class="ph"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"><circle cx="12" cy="12" r="9"/><path d="M12 3v18M3 12h18"/></svg></div><div class="body"><span class="cat" data-i18n="blog3_c">Materiali</span><h3 data-i18n="blog3_t">PA11 da stampa SLS: nero da macchina, biocompatibile e green</h3><span class="more"><span data-i18n="blog_more">Leggi l'articolo</span> <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></div></a>
+    </div>
+    <div style="text-align:center;margin-top:40px" class="reveal"><a class="btn btn-ghost" href="https://duepigreco3d.it/category/news/" target="_blank" rel="noopener" data-i18n="blog_all">Tutti gli articoli</a></div>
+  </div>
+</section>
+
+<section id="azienda">
+  <div class="wrap">
+    <div class="az-grid reveal">
+      <div>
+        <span class="eyebrow" data-rad="7π/4" data-i18n="az_ey">Azienda</span>
+        <h2 style="font-size:clamp(30px,4vw,46px);margin:16px 0 20px" data-i18n="az_h2">Additive People, dal 2010.</h2>
+        <p style="color:var(--ink-2);font-size:16px;margin-bottom:16px" data-i18n="az_p1">Due Pi Greco si occupa di design del prodotto, ingegnerizzazione, manifattura additiva e stampa 3D di componenti industriali. Nasce nel 2010 a Resana (Treviso) dalla passione e dall'esperienza di un team multidisciplinare, con sistemi industriali Stratasys e un laboratorio di 1.300 m².</p>
+        <p style="color:var(--ink-2);font-size:16px;margin-bottom:26px" data-i18n="az_p2">Dal 2025 Due Pi Greco fa parte di SolidWorld Group: un nuovo Polo Tecnologico a Resana dove additive manufacturing, progettazione e controllo qualità si integrano in un'unica filiera verticale.</p>
+        <a class="btn btn-ghost" href="https://duepigreco3d.it/category/news/" target="_blank" rel="noopener" data-i18n="az_cta">Leggi le novità</a>
+      </div>
+      <div class="az-panel">
+        <span class="swg">Parte di SolidWorld Group</span>
+        <div class="az-fact"><b>2010</b><span data-i18n="st_found">Anno di fondazione</span></div>
+        <div class="az-fact"><b>1.300 m²</b><span data-i18n="st_factory">Digital Factory</span></div>
+        <div class="az-fact"><b>FDM · SLS</b><span data-i18n="st_sys">Sistemi industriali</span></div>
+        <div class="az-fact"><b>ISO 10993</b><span data-i18n="why3_t">Materiali certificati</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="contatti" class="contact">
+  <div class="wrap">
+    <div class="sec-head reveal" style="margin-bottom:40px">
+      <span class="eyebrow" data-rad="2π" data-i18n="cont_ey">Contatti</span>
+      <h2 data-i18n="cont_h2">Parliamo del tuo progetto.</h2>
+      <p data-i18n="cont_p">Siamo a Resana, in provincia di Treviso. Scrivici o chiamaci: ti rispondiamo entro 24 ore lavorative.</p>
+    </div>
+    <div class="contact-grid reveal">
+      <div class="contact-info">
+        <div class="row"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg><div><div class="lbl" data-i18n="cont_addr">Indirizzo</div><div class="val">Via Roma 55, 31023 Resana – loc. Boscalto (TV)</div></div></div>
+        <div class="row"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.81.36 1.6.7 2.34a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.74-1.74a2 2 0 0 1 2.11-.45c.74.34 1.53.57 2.34.7A2 2 0 0 1 22 16.92z"/></svg><div><div class="lbl" data-i18n="cont_phone_l">Telefono</div><div class="val"><a href="tel:+390423715172">+39 0423 715172</a></div></div></div>
+        <div class="row"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-10 6L2 7"/></svg><div><div class="lbl" data-i18n="cont_email_l">Email</div><div class="val"><a href="mailto:info@duepigreco3d.it">info@duepigreco3d.it</a></div></div></div>
+        <div class="row"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M9 13h6M9 17h6"/></svg><div><div class="lbl" data-i18n="cont_vat_l">P.IVA</div><div class="val">04499050286</div></div></div>
+        <div class="contact-cta">
+          <button class="btn btn-accent" onclick="openModal()" data-i18n="cta_quote">Richiedi preventivo</button>
+          <a class="btn btn-ghost" href="mailto:info@duepigreco3d.it?subject=Richiesta%20informazioni" data-i18n="cont_mail">Scrivici una mail</a>
+        </div>
+      </div>
+      <div class="contact-map"><iframe loading="lazy" referrerpolicy="no-referrer-when-downgrade" src="https://www.google.com/maps?q=Via%20Roma%2055,%2031023%20Resana%20TV%20Italia&output=embed" title="Mappa Due Pi Greco"></iframe></div>
+    </div>
+  </div>
+</section>
+
+<section style="padding-top:0">
+  <div class="wrap">
+    <div class="cta-band reveal">
+      <div><h2 data-i18n="band_h2">Hai un file 3D? Ti diciamo come realizzarlo.</h2><p data-i18n="band_p">// presentazione, video-call o spedizione di un dettaglio campione, senza impegno</p></div>
+      <button class="btn btn-light" onclick="openModal()" data-i18n="band_btn">Richiedi preventivo</button>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="foot-grid">
+      <div class="foot-col foot-brand">
+        <div class="mark">2<span style="color:var(--accent)">π</span></div>
+        <p data-i18n="foot_p">Design, engineering e additive manufacturing ad alte prestazioni. Dal progetto al prototipo: diamo forma al tuo prodotto.</p>
+        <div class="foot-contact">Via Roma 55, 31023 Resana – loc. Boscalto (TV)<br><a href="tel:+390423715172">+39 0423 715172</a><br><a href="mailto:info@duepigreco3d.it">info@duepigreco3d.it</a><br>P.IVA 04499050286</div>
+      </div>
+      <div class="foot-col"><h4 data-i18n="foot_tech">Tecnologie</h4><ul><li><a href="#tecnologie">FDM</a></li><li><a href="#tecnologie">SLS</a></li><li><a href="#finitura" data-i18n="nav_fin">Finitura</a></li><li><a href="#materiali" data-i18n="nav_mat">Materiali</a></li></ul></div>
+      <div class="foot-col"><h4 data-i18n="foot_sol">Soluzioni</h4><ul><li><a href="#soluzioni" data-i18n="sol1">Prototipazione rapida</a></li><li><a href="#soluzioni" data-i18n="sol3">Componenti funzionali certificati</a></li><li><a href="#soluzioni" data-i18n="sol4">Geometrie complesse</a></li><li><a href="#soluzioni" data-i18n="sol7">Piccole e medie serie</a></li></ul></div>
+      <div class="foot-col"><h4 data-i18n="foot_comp">Azienda</h4><ul><li><a href="#azienda" data-i18n="foot_about">Chi siamo</a></li><li><a href="#blog" data-i18n="foot_blog">Blog</a></li><li><a href="#" onclick="openModal();return false;" data-i18n="foot_quote">Preventivo</a></li><li><a href="#contatti" data-i18n="foot_contact">Contatti</a></li></ul></div>
+    </div>
+    <div class="foot-bottom">
+      <small>© 2026 Due Pi Greco S.r.l. — <span data-i18n="foot_rights">Tutti i diritti riservati</span> · <a href="https://duepigreco3d.it/" target="_blank" rel="noopener" data-i18n="foot_privacy">Privacy</a> · <a href="https://duepigreco3d.it/" target="_blank" rel="noopener" data-i18n="foot_cookie">Cookie</a></small>
+      <div class="socials">
+        <a href="https://it.linkedin.com/company/due-pi-greco-srl" target="_blank" rel="noopener" aria-label="LinkedIn"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M4.98 3.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5zM3 9h4v12H3zM10 9h3.8v1.7h.05c.53-1 1.83-2.05 3.77-2.05 4.03 0 4.78 2.65 4.78 6.1V21h-4v-5.3c0-1.26-.02-2.9-1.77-2.9-1.77 0-2.04 1.38-2.04 2.8V21h-4z"/></svg></a>
+        <a href="https://www.instagram.com/duepigreco3d/" target="_blank" rel="noopener" aria-label="Instagram"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg></a>
+        <a href="https://www.facebook.com/duepigreco/" target="_blank" rel="noopener" aria-label="Facebook"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg></a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<div class="overlay" id="overlay">
+  <div class="modal" role="dialog" aria-modal="true" aria-label="Preventivo">
+    <div class="modal-head">
+      <div><h3 data-i18n="mod_title">Richiedi preventivo</h3><p data-i18n="mod_sub">Abbiamo il nostro parco macchine: troviamo la soluzione su misura per ogni applicazione.</p></div>
+      <button class="close-x" onclick="closeModal()" aria-label="Chiudi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
+    </div>
+    <div class="modal-body">
+      <div class="step active" data-step="1">
+        <button class="choice" onclick="goStep(2)"><span><b data-i18n="mod_c1_t">Ho un file 3D e voglio un preventivo</b><small data-i18n="mod_c1_s">Carica STL/STEP e ricevi una valutazione</small></span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
+        <button class="choice" onclick="goStep(3)"><span><b data-i18n="mod_c2_t">Voglio saperne di più sull'offerta</b><small data-i18n="mod_c2_s">Parla con un tecnico, senza impegno</small></span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
+      </div>
+      <div class="step" data-step="2">
+        <div class="field"><label data-i18n="mod_file">Il tuo file 3D</label>
+          <label class="dropzone" id="dropzone" for="fileInput"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"/></svg><b id="dropLabel" data-i18n="mod_drop">Trascina qui il file o sfoglia</b><small data-i18n="mod_drop_s">STL, STEP, OBJ, 3MF · max 100 MB</small></label>
+          <input type="file" id="fileInput" accept=".stl,.step,.stp,.obj,.3mf" style="display:none" onchange="onFile(this)">
+        </div>
+        <div class="field"><label data-i18n="mod_size">Dimensione massima del pezzo</label>
+          <div class="sizes"><div class="size-opt" onclick="pickSize(this,'≤100 mm')"><b>≤100</b><span>mm</span></div><div class="size-opt" onclick="pickSize(this,'≤300 mm')"><b>≤300</b><span>mm</span></div><div class="size-opt" onclick="pickSize(this,'≤600 mm')"><b>≤600</b><span>mm</span></div></div>
+        </div>
+        <div class="two"><div class="field"><label data-i18n="mod_tech">Tecnologia</label><select id="qTech"><option data-i18n="mod_tech_auto">Consigliami voi</option><option>FDM</option><option>SLS</option></select></div><div class="field"><label data-i18n="mod_qty">Quantità</label><input id="qQty" type="number" min="1" value="1"></div></div>
+        <div class="modal-foot"><button class="back-link" onclick="goStep(1)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M11 18l-6-6 6-6"/></svg> <span data-i18n="mod_back">Indietro</span></button><button class="btn btn-accent" onclick="goStep(3)" data-i18n="mod_continue">Continua</button></div>
+      </div>
+      <div class="step" data-step="3">
+        <div class="two"><div class="field"><label data-i18n="mod_name">Nome e cognome</label><input id="qName" type="text"></div><div class="field"><label data-i18n="mod_company">Azienda</label><input id="qCompany" type="text"></div></div>
+        <div class="two"><div class="field"><label data-i18n="mod_email">Email</label><input id="qEmail" type="email"></div><div class="field"><label data-i18n="mod_phone">Telefono</label><input id="qPhone" type="tel"></div></div>
+        <div class="field"><label data-i18n="mod_msg">Messaggio</label><textarea id="qMsg" rows="3" data-i18n-ph="mod_msg_ph" placeholder="Raccontaci la tua applicazione..."></textarea></div>
+        <div class="modal-foot"><button class="back-link" onclick="goStep(1)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M11 18l-6-6 6-6"/></svg> <span data-i18n="mod_restart">Ricomincia</span></button><button class="btn btn-accent" onclick="submitQuote()" data-i18n="mod_send">Invia richiesta</button></div>
+      </div>
+      <div class="step" data-step="4">
+        <div class="done"><div class="check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M20 6 9 17l-5-5"/></svg></div><h3 data-i18n="mod_done_t">Richiesta inviata!</h3><p data-i18n="mod_done_p">Grazie. Il nostro team ti spiegherà come lavoriamo e come valutiamo gli ordini. Ti ricontattiamo entro 24 ore lavorative.</p><button class="btn btn-accent" style="margin-top:24px" onclick="closeModal()" data-i18n="mod_close">Chiudi</button></div>
+      </div>
+    </div>
+    <div class="modal-prog"><div class="progress"><span id="progLabel">passo 1 / 3</span><svg viewBox="0 0 40 40"><circle class="track" cx="20" cy="20" r="16"></circle><circle class="fill" id="progFill" cx="20" cy="20" r="16"></circle></svg></div></div>
+  </div>
+</div>
+
+<script>
+  const FLAGS={
+    it:'<svg viewBox="0 0 21 15"><rect width="7" height="15" fill="#009246"/><rect x="7" width="7" height="15" fill="#fff"/><rect x="14" width="7" height="15" fill="#CE2B37"/></svg>',
+    en:'<svg viewBox="0 0 60 30" preserveAspectRatio="none"><rect width="60" height="30" fill="#012169"/><path d="M0,0 60,30 M60,0 0,30" stroke="#fff" stroke-width="6"/><path d="M0,0 60,30 M60,0 0,30" stroke="#C8102E" stroke-width="3"/><rect x="25" width="10" height="30" fill="#fff"/><rect y="10" width="60" height="10" fill="#fff"/><rect x="27" width="6" height="30" fill="#C8102E"/><rect y="12" width="60" height="6" fill="#C8102E"/></svg>',
+    de:'<svg viewBox="0 0 21 15"><rect width="21" height="5" fill="#000"/><rect y="5" width="21" height="5" fill="#D00"/><rect y="10" width="21" height="5" fill="#FFCE00"/></svg>',
+    fr:'<svg viewBox="0 0 21 15"><rect width="7" height="15" fill="#0055A4"/><rect x="7" width="7" height="15" fill="#fff"/><rect x="14" width="7" height="15" fill="#EF4135"/></svg>',
+    es:'<svg viewBox="0 0 21 15"><rect width="21" height="15" fill="#AA151B"/><rect y="3.75" width="21" height="7.5" fill="#F1BF00"/></svg>'
+  };
+  const LANGS=[['it','Italiano'],['en','English'],['de','Deutsch'],['fr','Français'],['es','Español']];
+  const I18N={
+   it:{nav_serv:"Servizi",nav_tech:"Tecnologie",nav_mat:"Materiali",nav_fin:"Finitura",nav_sol:"Soluzioni",nav_sect:"Settori",nav_blog:"Blog",cta_quote:"Richiedi preventivo",hero_ey:"Service provider · dal 2010",hero_h1a:"Le tue idee diventano",hero_h1b:"componenti funzionali.",hero_lead:"Design, ingegnerizzazione e additive manufacturing ad alte prestazioni. Dal progetto al prototipo, fino alla produzione di parti e componenti certificati — tutto nella nostra Digital Factory.",hero_cta2:"Esplora le tecnologie",st_found:"Anno di fondazione",st_factory:"Digital Factory",st_sys:"Sistemi industriali",st_dev:"Sviluppo prodotto",trust_lbl:"Su cui contano i nostri clienti",trust_1:"Parco macchine di proprietà",trust_2:"Sistemi industriali Stratasys",trust_3:"Materiali certificati · ISO 10993",trust_4:"Officina Industria 4.0",svc_ey:"Cosa facciamo",svc_h2:"Un unico partner, dal disegno al pezzo finito.",svc_p:"Una metodologia multidisciplinare che integra in modo organico tutte le fasi: design, progettazione, ingegnerizzazione, prototipazione e produzione additiva.",svc1_t:"Industrial & Product Design",svc1_d:"Diamo forma a soluzioni concrete, funzionali ed esteticamente curate, dal concept all'aspetto finale del prodotto.",svc2_t:"Ingegnerizzazione",svc2_d:"Trasformiamo il progetto in un componente producibile: analisi funzionale, scelta dei materiali e ottimizzazione del processo.",svc3_t:"DfAM",svc3_d:"Design for Additive Manufacturing: riprogettiamo il pezzo per sfruttare al massimo i vantaggi della stampa 3D.",svc4_t:"Additive Manufacturing",svc4_d:"Stampa 3D industriale di prototipi e componenti funzionali con sistemi FDM e SLS, direttamente in azienda.",svc5_t:"Finitura & post-produzione",svc5_d:"Sabbiatura, levigatura e verniciatura di alta qualità, anche biocompatibile, per superfici pronte all'uso.",svc6_t:"Consulenza tecnica",svc6_d:"Ti affianchiamo nella scelta di tecnologia, materiale e strategia produttiva più adatta alla tua applicazione.",why_ey:"Perché Due Pi Greco",why_h2:"Pensa alle soluzioni. Non agli ostacoli.",why_p:"Senza costi di avviamento, con alta durabilità e tempi di produzione rapidi, puoi progettare le soluzioni migliori. Non solo quelle possibili.",why1_t:"Parco macchine di proprietà",why1_d:"Le stampanti sono in azienda: controlliamo l'intero processo, dalla qualità ai tempi.",why2_t:"Tempi di produzione rapidi",why2_d:"Cicli di sviluppo brevi senza mai sacrificare la qualità del componente.",why3_t:"Materiali certificati",why3_d:"Funzionali e affidabili, fino a polimeri biocompatibili certificati ISO 10993.",why4_t:"Digital Factory 4.0",why4_d:"Un'officina in ottica Industria 4.0, con attrezzature per finitura e assemblaggio.",why5_t:"Team multidisciplinare",why5_d:"Designer, ingegneri e tecnici che lavorano insieme su ogni progetto.",why6_t:"Partner OEM a 360°",why6_d:"Ti seguiamo lungo l'intero sviluppo del prodotto, da zero al componente finale.",sol_ey:"Soluzioni",sol_h2:"Cosa possiamo fare per te.",sol_p:"Scopri come l'additive manufacturing può rispondere a esigenze concrete di prodotto e produzione.",sol1:"Prototipazione rapida",sol2:"Riduci il time-to-market",sol3:"Componenti funzionali certificati",sol4:"Geometrie complesse",sol5:"Alleggerimento delle parti",sol6:"Attrezzature e utensili",sol7:"Piccole e medie serie",sol8:"Nessun costo di avviamento",tm_ey:"Tecnologie & Materiali",tm_h2:"Il processo giusto per ogni applicazione.",tech_t:"Tecnologie",tech_sub:"// processi di stampa industriali",tech_fdm_d:"Fused Deposition Modeling — sistemi Stratasys Fortus per polimeri tecnici ad alte prestazioni.",tech_sls_d:"Sinterizzazione laser selettiva — geometrie complesse e ottime proprietà meccaniche, senza supporti.",tech_fin:"Finitura",tech_fin_d:"Sabbiatura, levigatura, tintura e verniciatura biocompatibile.",mat_t:"Materiali",mat_sub:"// una selezione dei polimeri disponibili",mat_bio:"PC biocompatibile",mat_note:"Non trovi il materiale che ti serve? Raccontaci l'applicazione: troviamo la soluzione su misura.",mat_btn:"Parla con un tecnico",fin_ey:"Post-produzione",fin_h2:"Rendi i pezzi unici.",fin_p:"Lo stesso componente attraversa le nostre fasi di finitura. Scorri e guardalo passare dal grezzo al verniciato.",fin_hint:"scorri per cambiare finitura",fin_n0:"Grezzo",fin_n1:"Nero con additivi",fin_n2:"Nero",fin_n3:"Nero lucidato",fin_n4:"Verniciato",fin_d0:"Il pezzo come esce dalla stampa, con le linee di deposizione ancora visibili.",fin_d1:"Primer e riempitivo chiudono le porosità e preparano la superficie.",fin_d2:"Colorazione uniforme su tutta la superficie del componente.",fin_d3:"Levigatura progressiva fino a una finitura liscia e brillante.",fin_d4:"Verniciatura di alta qualità, anche biocompatibile, pronta all'uso.",sect_ey:"Settori",sect_h2:"Forniamo parti ai leader dell'industria.",sect_1:"Automotive",sect_2:"Aerospace",sect_3:"Medicale",sect_4:"Macchinari & impianti",sect_5:"Industrial design",sect_6:"Robotica",sect_7:"Beni di consumo",blog_ey:"Dal blog",blog_h2:"Approfondimenti dal nostro laboratorio.",blog1_c:"Post-produzione",blog1_t:"Tecniche di finitura superficiale: migliorare le parti stampate in 3D",blog2_c:"Tecnologie",blog2_t:"La nuova stampante SLS Formlabs è arrivata in Digital Factory",blog3_c:"Qualità",blog3_t:"Omogeneità nella stampa 3D: un fattore chiave per la qualità",blog_more:"Leggi l'articolo",band_h2:"Hai un file 3D? Ti diciamo come realizzarlo.",band_p:"// presentazione, video-call o spedizione di un dettaglio campione, senza impegno",band_btn:"Richiedi preventivo",foot_p:"Design, engineering e additive manufacturing ad alte prestazioni. Dal progetto al prototipo: diamo forma al tuo prodotto.",foot_tech:"Tecnologie",foot_sol:"Soluzioni",foot_comp:"Azienda",foot_about:"Chi siamo",foot_blog:"Blog",foot_quote:"Preventivo",foot_contact:"Contatti",foot_rights:"Tutti i diritti riservati",foot_privacy:"Privacy",foot_cookie:"Cookie",mod_title:"Richiedi preventivo",mod_sub:"Abbiamo il nostro parco macchine: troviamo la soluzione su misura per ogni applicazione.",mod_c1_t:"Ho un file 3D e voglio un preventivo",mod_c1_s:"Carica STL/STEP e ricevi una valutazione",mod_c2_t:"Voglio saperne di più sull'offerta",mod_c2_s:"Parla con un tecnico, senza impegno",mod_file:"Il tuo file 3D",mod_drop:"Trascina qui il file o sfoglia",mod_drop_s:"STL, STEP, OBJ, 3MF · max 100 MB",mod_size:"Dimensione massima del pezzo",mod_tech:"Tecnologia",mod_tech_auto:"Consigliami voi",mod_qty:"Quantità",mod_back:"Indietro",mod_continue:"Continua",mod_name:"Nome e cognome",mod_company:"Azienda",mod_email:"Email",mod_phone:"Telefono",mod_msg:"Messaggio",mod_msg_ph:"Raccontaci la tua applicazione...",mod_restart:"Ricomincia",mod_send:"Invia richiesta",mod_done_t:"Richiesta inviata!",mod_done_p:"Grazie. Il nostro team ti spiegherà come lavoriamo e come valutiamo gli ordini. Ti ricontattiamo entro 24 ore lavorative.",mod_close:"Chiudi",mod_step:"passo {n} / 3",mod_done_lbl:"completato · 2π",nav_az:"Azienda",nav_cont:"Contatti",az_ey:"Azienda",az_h2:"Additive People, dal 2010.",az_p1:"Due Pi Greco si occupa di design del prodotto, ingegnerizzazione, manifattura additiva e stampa 3D di componenti industriali. Nasce nel 2010 a Resana (Treviso) dalla passione e dall'esperienza di un team multidisciplinare, con sistemi industriali Stratasys e un laboratorio di 1.300 m².",az_p2:"Dal 2025 Due Pi Greco fa parte di SolidWorld Group: un nuovo Polo Tecnologico a Resana dove additive manufacturing, progettazione e controllo qualità si integrano in un'unica filiera verticale.",az_cta:"Leggi le novità",cont_ey:"Contatti",cont_h2:"Parliamo del tuo progetto.",cont_p:"Siamo a Resana, in provincia di Treviso. Scrivici o chiamaci: ti rispondiamo entro 24 ore lavorative.",cont_addr:"Indirizzo",cont_phone_l:"Telefono",cont_email_l:"Email",cont_vat_l:"P.IVA",cont_mail:"Scrivici una mail",blog_all:"Tutti gli articoli",blog2_c:"Novità",blog2_t:"Due Pi Greco entra nel SolidWorld Group: nasce un nuovo Polo Tecnologico",blog3_c:"Materiali",blog3_t:"PA11 da stampa SLS: nero da macchina, biocompatibile e green"}
+   ,en:{nav_serv:"Services",nav_tech:"Technologies",nav_mat:"Materials",nav_fin:"Finishing",nav_sol:"Solutions",nav_sect:"Sectors",nav_blog:"Blog",cta_quote:"Get a quote",hero_ey:"Service provider · since 2010",hero_h1a:"Your ideas become",hero_h1b:"functional parts.",hero_lead:"High-performance design, engineering and additive manufacturing. From concept to prototype, all the way to certified production parts — all in our Digital Factory.",hero_cta2:"Explore technologies",st_found:"Founded",st_factory:"Digital Factory",st_sys:"Industrial systems",st_dev:"Product development",trust_lbl:"What our clients rely on",trust_1:"In-house machine park",trust_2:"Industrial Stratasys systems",trust_3:"Certified materials · ISO 10993",trust_4:"Industry 4.0 workshop",svc_ey:"What we do",svc_h2:"One partner, from drawing to finished part.",svc_p:"A multidisciplinary method that organically integrates every stage: design, engineering, prototyping and additive production.",svc1_t:"Industrial & Product Design",svc1_d:"We shape concrete, functional and refined solutions, from concept to the product's final look.",svc2_t:"Engineering",svc2_d:"We turn the project into a manufacturable part: functional analysis, material selection and process optimisation.",svc3_t:"DfAM",svc3_d:"Design for Additive Manufacturing: we redesign the part to make the most of 3D printing.",svc4_t:"Additive Manufacturing",svc4_d:"Industrial 3D printing of prototypes and functional parts with FDM and SLS systems, in-house.",svc5_t:"Finishing & post-production",svc5_d:"Blasting, smoothing and high-quality painting, biocompatible too, for ready-to-use surfaces.",svc6_t:"Technical consulting",svc6_d:"We help you choose the technology, material and production strategy best suited to your application.",why_ey:"Why Due Pi Greco",why_h2:"Think about solutions. Not obstacles.",why_p:"With no start-up costs, high durability and fast production times, you can design the best solutions. Not just the possible ones.",why1_t:"In-house machine park",why1_d:"The printers are on site: we control the whole process, from quality to lead time.",why2_t:"Fast production times",why2_d:"Short development cycles without ever compromising part quality.",why3_t:"Certified materials",why3_d:"Functional and reliable, up to ISO 10993 certified biocompatible polymers.",why4_t:"Digital Factory 4.0",why4_d:"An Industry 4.0 workshop, equipped for finishing and assembly.",why5_t:"Multidisciplinary team",why5_d:"Designers, engineers and technicians working together on every project.",why6_t:"360° OEM partner",why6_d:"We support you across the entire product development, from zero to the final part.",sol_ey:"Solutions",sol_h2:"What we can do for you.",sol_p:"See how additive manufacturing can meet concrete product and production needs.",sol1:"Rapid prototyping",sol2:"Reduce time-to-market",sol3:"Certified functional parts",sol4:"Complex geometries",sol5:"Part lightweighting",sol6:"Tools & equipment",sol7:"Small to medium batches",sol8:"No start-up costs",tm_ey:"Technologies & Materials",tm_h2:"The right process for every application.",tech_t:"Technologies",tech_sub:"// industrial printing processes",tech_fdm_d:"Fused Deposition Modeling — Stratasys Fortus systems for high-performance engineering polymers.",tech_sls_d:"Selective Laser Sintering — complex geometries and excellent mechanical properties, support-free.",tech_fin:"Finishing",tech_fin_d:"Blasting, smoothing, dyeing and biocompatible painting.",mat_t:"Materials",mat_sub:"// a selection of available polymers",mat_bio:"Biocompatible PC",mat_note:"Can't find the material you need? Tell us about the application and we'll find the right solution.",mat_btn:"Talk to an engineer",fin_ey:"Post-production",fin_h2:"Make parts unique.",fin_p:"The same part goes through our finishing stages. Scroll and watch it move from raw to lacquered.",fin_hint:"scroll to change finish",fin_n0:"Raw",fin_n1:"Black with additions",fin_n2:"Black",fin_n3:"Black polished",fin_n4:"Lacquered",fin_d0:"The part straight off the printer, with deposition lines still visible.",fin_d1:"Primer and filler close the porosity and prepare the surface.",fin_d2:"Uniform colour across the whole surface of the part.",fin_d3:"Progressive smoothing to a sleek, glossy finish.",fin_d4:"High-quality painting, biocompatible too, ready to use.",sect_ey:"Sectors",sect_h2:"We supply parts to industry leaders.",sect_1:"Automotive",sect_2:"Aerospace",sect_3:"Medical",sect_4:"Machinery & plants",sect_5:"Industrial design",sect_6:"Robotics",sect_7:"Consumer goods",blog_ey:"From the blog",blog_h2:"Insights from our workshop.",blog1_c:"Post-production",blog1_t:"Surface finishing techniques: improving 3D-printed parts",blog2_c:"Technologies",blog2_t:"The new Formlabs SLS printer has arrived in the Digital Factory",blog3_c:"Quality",blog3_t:"Consistency in 3D printing: a key factor for quality",blog_more:"Read the article",band_h2:"Got a 3D file? We'll tell you how to make it.",band_p:"// on-site presentation, video call or a free sample part shipped — no commitment",band_btn:"Get a quote",foot_p:"High-performance design, engineering and additive manufacturing. From project to prototype: we give shape to your product.",foot_tech:"Technologies",foot_sol:"Solutions",foot_comp:"Company",foot_about:"About us",foot_blog:"Blog",foot_quote:"Get a quote",foot_contact:"Contact",foot_rights:"All rights reserved",foot_privacy:"Privacy",foot_cookie:"Cookie",mod_title:"Get a quote",mod_sub:"We have our own machine park: we find a tailored solution for every application.",mod_c1_t:"I have a 3D file and want a quote",mod_c1_s:"Upload STL/STEP and get an assessment",mod_c2_t:"I want to learn more about the offer",mod_c2_s:"Talk to an engineer, no commitment",mod_file:"Your 3D file",mod_drop:"Drag your file here or browse",mod_drop_s:"STL, STEP, OBJ, 3MF · max 100 MB",mod_size:"Maximum part size",mod_tech:"Technology",mod_tech_auto:"You recommend",mod_qty:"Quantity",mod_back:"Back",mod_continue:"Continue",mod_name:"Full name",mod_company:"Company",mod_email:"Email",mod_phone:"Phone",mod_msg:"Message",mod_msg_ph:"Tell us about your application...",mod_restart:"Start over",mod_send:"Send request",mod_done_t:"Request sent!",mod_done_p:"Thank you. Our team will explain how we work and how we price orders. We'll get back to you within 24 working hours.",mod_close:"Close",mod_step:"step {n} / 3",mod_done_lbl:"completed · 2π",nav_az:"Company",nav_cont:"Contact",az_ey:"Company",az_h2:"Additive People, since 2010.",az_p1:"Due Pi Greco focuses on product design, engineering, additive manufacturing and 3D printing of industrial components. Born in 2010 in Resana (Treviso) from the passion and expertise of a multidisciplinary team, with Stratasys industrial systems and a 1,300 m² workshop.",az_p2:"Since 2025 Due Pi Greco is part of SolidWorld Group: a new technology hub in Resana where additive manufacturing, design and quality control merge into a single vertical chain.",az_cta:"Read the news",cont_ey:"Contact",cont_h2:"Let's talk about your project.",cont_p:"We're in Resana, near Treviso. Write or call us: we reply within 24 working hours.",cont_addr:"Address",cont_phone_l:"Phone",cont_email_l:"Email",cont_vat_l:"VAT",cont_mail:"Email us",blog_all:"All articles",blog2_c:"News",blog2_t:"Due Pi Greco joins SolidWorld Group: a new technology hub is born",blog3_c:"Materials",blog3_t:"PA11 SLS printing: black as printed, biocompatible and green"}
+   ,de:{nav_serv:"Leistungen",nav_tech:"Technologien",nav_mat:"Materialien",nav_fin:"Finishing",nav_sol:"Lösungen",nav_sect:"Branchen",nav_blog:"Blog",cta_quote:"Angebot anfordern",hero_ey:"Service Provider · seit 2010",hero_h1a:"Aus Ideen werden",hero_h1b:"funktionale Bauteile.",hero_lead:"Design, Engineering und Additive Fertigung auf höchstem Niveau. Vom Entwurf über den Prototyp bis zu zertifizierten Serienteilen — alles in unserer Digital Factory.",hero_cta2:"Technologien entdecken",st_found:"Gegründet",st_factory:"Digital Factory",st_sys:"Industriesysteme",st_dev:"Produktentwicklung",trust_lbl:"Worauf unsere Kunden zählen",trust_1:"Eigener Maschinenpark",trust_2:"Industrielle Stratasys-Systeme",trust_3:"Zertifizierte Materialien · ISO 10993",trust_4:"Industrie-4.0-Werkstatt",svc_ey:"Was wir tun",svc_h2:"Ein Partner – von der Zeichnung zum fertigen Teil.",svc_p:"Eine multidisziplinäre Methode, die alle Phasen organisch verbindet: Design, Konstruktion, Engineering, Prototyping und additive Fertigung.",svc1_t:"Industrie- & Produktdesign",svc1_d:"Wir geben konkreten, funktionalen und ästhetisch durchdachten Lösungen Form – vom Konzept bis zum finalen Produkt.",svc2_t:"Engineering",svc2_d:"Wir machen aus dem Projekt ein fertigbares Bauteil: Funktionsanalyse, Materialauswahl und Prozessoptimierung.",svc3_t:"DfAM",svc3_d:"Design for Additive Manufacturing: Wir gestalten das Teil neu, um die Vorteile des 3D-Drucks voll zu nutzen.",svc4_t:"Additive Fertigung",svc4_d:"Industrieller 3D-Druck von Prototypen und Funktionsbauteilen mit FDM- und SLS-Systemen, im eigenen Haus.",svc5_t:"Finishing & Nachbearbeitung",svc5_d:"Strahlen, Glätten und hochwertige Lackierung, auch biokompatibel, für einsatzbereite Oberflächen.",svc6_t:"Technische Beratung",svc6_d:"Wir unterstützen Sie bei der Wahl von Technologie, Material und Fertigungsstrategie für Ihre Anwendung.",why_ey:"Warum Due Pi Greco",why_h2:"Denken Sie an Lösungen. Nicht an Hindernisse.",why_p:"Ohne Anlaufkosten, mit hoher Haltbarkeit und kurzen Produktionszeiten gestalten Sie die besten Lösungen. Nicht nur die möglichen.",why1_t:"Eigener Maschinenpark",why1_d:"Die Drucker stehen im Haus: Wir steuern den gesamten Prozess – von Qualität bis Termin.",why2_t:"Kurze Produktionszeiten",why2_d:"Kurze Entwicklungszyklen, ohne Kompromisse bei der Bauteilqualität.",why3_t:"Zertifizierte Materialien",why3_d:"Funktional und zuverlässig, bis hin zu ISO-10993-zertifizierten biokompatiblen Polymeren.",why4_t:"Digital Factory 4.0",why4_d:"Eine Werkstatt nach Industrie 4.0, ausgestattet für Finishing und Montage.",why5_t:"Multidisziplinäres Team",why5_d:"Designer, Ingenieure und Techniker arbeiten bei jedem Projekt zusammen.",why6_t:"360°-OEM-Partner",why6_d:"Wir begleiten Sie durch die gesamte Produktentwicklung – von null bis zum fertigen Teil.",sol_ey:"Lösungen",sol_h2:"Was wir für Sie tun können.",sol_p:"Sehen Sie, wie additive Fertigung konkrete Produkt- und Produktionsanforderungen erfüllt.",sol1:"Rapid Prototyping",sol2:"Time-to-Market verkürzen",sol3:"Zertifizierte Funktionsbauteile",sol4:"Komplexe Geometrien",sol5:"Bauteile leichter machen",sol6:"Werkzeuge & Vorrichtungen",sol7:"Klein- und Mittelserien",sol8:"Keine Anlaufkosten",tm_ey:"Technologien & Materialien",tm_h2:"Der richtige Prozess für jede Anwendung.",tech_t:"Technologien",tech_sub:"// industrielle Druckverfahren",tech_fdm_d:"Fused Deposition Modeling — Stratasys-Fortus-Systeme für leistungsstarke technische Polymere.",tech_sls_d:"Selektives Lasersintern — komplexe Geometrien und hervorragende mechanische Eigenschaften, ohne Stützen.",tech_fin:"Finishing",tech_fin_d:"Strahlen, Glätten, Färben und biokompatible Lackierung.",mat_t:"Materialien",mat_sub:"// eine Auswahl verfügbarer Polymere",mat_bio:"Biokompatibles PC",mat_note:"Das passende Material nicht dabei? Beschreiben Sie die Anwendung – wir finden die maßgeschneiderte Lösung.",mat_btn:"Mit einem Techniker sprechen",fin_ey:"Nachbearbeitung",fin_h2:"Machen Sie Teile einzigartig.",fin_p:"Dasselbe Bauteil durchläuft unsere Finishing-Stufen. Scrollen Sie und sehen Sie es vom Rohteil zur Lackierung.",fin_hint:"scrollen, um das Finish zu wechseln",fin_n0:"Roh",fin_n1:"Schwarz mit Zusätzen",fin_n2:"Schwarz",fin_n3:"Schwarz poliert",fin_n4:"Lackiert",fin_d0:"Das Teil direkt aus dem Drucker, mit noch sichtbaren Schichtlinien.",fin_d1:"Primer und Füller schließen die Poren und bereiten die Oberfläche vor.",fin_d2:"Gleichmäßige Farbe über die gesamte Oberfläche des Bauteils.",fin_d3:"Schrittweises Glätten bis zu einem glatten, glänzenden Finish.",fin_d4:"Hochwertige Lackierung, auch biokompatibel, einsatzbereit.",sect_ey:"Branchen",sect_h2:"Wir liefern Teile an Branchenführer.",sect_1:"Automotive",sect_2:"Luft- & Raumfahrt",sect_3:"Medizin",sect_4:"Maschinen & Anlagen",sect_5:"Industriedesign",sect_6:"Robotik",sect_7:"Konsumgüter",blog_ey:"Aus dem Blog",blog_h2:"Einblicke aus unserer Werkstatt.",blog1_c:"Nachbearbeitung",blog1_t:"Techniken der Oberflächenbearbeitung: 3D-Druckteile verbessern",blog2_c:"Technologien",blog2_t:"Der neue Formlabs-SLS-Drucker ist in der Digital Factory angekommen",blog3_c:"Qualität",blog3_t:"Gleichmäßigkeit im 3D-Druck: ein Schlüsselfaktor für Qualität",blog_more:"Artikel lesen",band_h2:"Sie haben eine 3D-Datei? Wir sagen Ihnen, wie wir sie umsetzen.",band_p:"// Präsentation vor Ort, Videocall oder kostenloser Musterversand — unverbindlich",band_btn:"Angebot anfordern",foot_p:"Design, Engineering und Additive Fertigung auf höchstem Niveau. Vom Projekt zum Prototyp: Wir geben Ihrem Produkt Form.",foot_tech:"Technologien",foot_sol:"Lösungen",foot_comp:"Unternehmen",foot_about:"Über uns",foot_blog:"Blog",foot_quote:"Angebot",foot_contact:"Kontakt",foot_rights:"Alle Rechte vorbehalten",foot_privacy:"Datenschutz",foot_cookie:"Cookies",mod_title:"Angebot anfordern",mod_sub:"Wir haben unseren eigenen Maschinenpark: Wir finden für jede Anwendung eine maßgeschneiderte Lösung.",mod_c1_t:"Ich habe eine 3D-Datei und möchte ein Angebot",mod_c1_s:"STL/STEP hochladen und Einschätzung erhalten",mod_c2_t:"Ich möchte mehr über das Angebot erfahren",mod_c2_s:"Mit einem Techniker sprechen, unverbindlich",mod_file:"Ihre 3D-Datei",mod_drop:"Datei hierher ziehen oder durchsuchen",mod_drop_s:"STL, STEP, OBJ, 3MF · max. 100 MB",mod_size:"Maximale Bauteilgröße",mod_tech:"Technologie",mod_tech_auto:"Bitte empfehlen",mod_qty:"Menge",mod_back:"Zurück",mod_continue:"Weiter",mod_name:"Name",mod_company:"Unternehmen",mod_email:"E-Mail",mod_phone:"Telefon",mod_msg:"Nachricht",mod_msg_ph:"Beschreiben Sie Ihre Anwendung...",mod_restart:"Neu starten",mod_send:"Anfrage senden",mod_done_t:"Anfrage gesendet!",mod_done_p:"Vielen Dank. Unser Team erklärt Ihnen, wie wir arbeiten und Aufträge kalkulieren. Wir melden uns innerhalb von 24 Arbeitsstunden.",mod_close:"Schließen",mod_step:"Schritt {n} / 3",mod_done_lbl:"abgeschlossen · 2π",nav_az:"Unternehmen",nav_cont:"Kontakt",az_ey:"Unternehmen",az_h2:"Additive People, seit 2010.",az_p1:"Due Pi Greco beschäftigt sich mit Produktdesign, Engineering, additiver Fertigung und 3D-Druck von Industriebauteilen. 2010 in Resana (Treviso) aus der Leidenschaft und Erfahrung eines multidisziplinären Teams entstanden, mit industriellen Stratasys-Systemen und einer Werkstatt von 1.300 m².",az_p2:"Seit 2025 ist Due Pi Greco Teil der SolidWorld Group: ein neuer Technologiestandort in Resana, an dem additive Fertigung, Konstruktion und Qualitätskontrolle zu einer durchgängigen Wertschöpfungskette verschmelzen.",az_cta:"Neuigkeiten lesen",cont_ey:"Kontakt",cont_h2:"Sprechen wir über Ihr Projekt.",cont_p:"Wir sind in Resana bei Treviso. Schreiben oder rufen Sie uns an: Antwort innerhalb von 24 Arbeitsstunden.",cont_addr:"Adresse",cont_phone_l:"Telefon",cont_email_l:"E-Mail",cont_vat_l:"USt-IdNr.",cont_mail:"E-Mail schreiben",blog_all:"Alle Artikel",blog2_c:"News",blog2_t:"Due Pi Greco wird Teil der SolidWorld Group: ein neuer Technologiestandort entsteht",blog3_c:"Materialien",blog3_t:"PA11 im SLS-Druck: schwarz ab Maschine, biokompatibel und grün"}
+   ,fr:{nav_serv:"Services",nav_tech:"Technologies",nav_mat:"Matériaux",nav_fin:"Finition",nav_sol:"Solutions",nav_sect:"Secteurs",nav_blog:"Blog",cta_quote:"Demander un devis",hero_ey:"Service provider · depuis 2010",hero_h1a:"Vos idées deviennent",hero_h1b:"des pièces fonctionnelles.",hero_lead:"Design, ingénierie et fabrication additive haute performance. Du concept au prototype, jusqu'aux pièces de série certifiées — le tout dans notre Digital Factory.",hero_cta2:"Explorer les technologies",st_found:"Création",st_factory:"Digital Factory",st_sys:"Systèmes industriels",st_dev:"Développement produit",trust_lbl:"Ce sur quoi nos clients comptent",trust_1:"Parc machines intégré",trust_2:"Systèmes industriels Stratasys",trust_3:"Matériaux certifiés · ISO 10993",trust_4:"Atelier Industrie 4.0",svc_ey:"Ce que nous faisons",svc_h2:"Un seul partenaire, du dessin à la pièce finie.",svc_p:"Une méthode pluridisciplinaire qui intègre naturellement toutes les étapes : design, conception, ingénierie, prototypage et production additive.",svc1_t:"Design industriel & produit",svc1_d:"Nous donnons forme à des solutions concrètes, fonctionnelles et soignées, du concept à l'aspect final du produit.",svc2_t:"Ingénierie",svc2_d:"Nous transformons le projet en pièce industrialisable : analyse fonctionnelle, choix des matériaux et optimisation du procédé.",svc3_t:"DfAM",svc3_d:"Design for Additive Manufacturing : nous repensons la pièce pour exploiter pleinement l'impression 3D.",svc4_t:"Fabrication additive",svc4_d:"Impression 3D industrielle de prototypes et de pièces fonctionnelles avec des systèmes FDM et SLS, en interne.",svc5_t:"Finition & post-production",svc5_d:"Sablage, lissage et peinture haut de gamme, biocompatible aussi, pour des surfaces prêtes à l'emploi.",svc6_t:"Conseil technique",svc6_d:"Nous vous aidons à choisir la technologie, le matériau et la stratégie de production adaptés à votre application.",why_ey:"Pourquoi Due Pi Greco",why_h2:"Pensez aux solutions. Pas aux obstacles.",why_p:"Sans coûts de lancement, avec une grande durabilité et des délais courts, vous concevez les meilleures solutions. Pas seulement les possibles.",why1_t:"Parc machines intégré",why1_d:"Les imprimantes sont chez nous : nous maîtrisons tout le processus, de la qualité aux délais.",why2_t:"Délais de production courts",why2_d:"Des cycles de développement courts, sans jamais sacrifier la qualité de la pièce.",why3_t:"Matériaux certifiés",why3_d:"Fonctionnels et fiables, jusqu'aux polymères biocompatibles certifiés ISO 10993.",why4_t:"Digital Factory 4.0",why4_d:"Un atelier pensé Industrie 4.0, équipé pour la finition et l'assemblage.",why5_t:"Équipe pluridisciplinaire",why5_d:"Designers, ingénieurs et techniciens travaillent ensemble sur chaque projet.",why6_t:"Partenaire OEM à 360°",why6_d:"Nous vous accompagnons sur tout le développement produit, de zéro à la pièce finale.",sol_ey:"Solutions",sol_h2:"Ce que nous pouvons faire pour vous.",sol_p:"Découvrez comment la fabrication additive répond à des besoins concrets de produit et de production.",sol1:"Prototypage rapide",sol2:"Réduire le time-to-market",sol3:"Pièces fonctionnelles certifiées",sol4:"Géométries complexes",sol5:"Allègement des pièces",sol6:"Outillages & équipements",sol7:"Petites et moyennes séries",sol8:"Aucun coût de lancement",tm_ey:"Technologies & Matériaux",tm_h2:"Le bon procédé pour chaque application.",tech_t:"Technologies",tech_sub:"// procédés d'impression industriels",tech_fdm_d:"Fused Deposition Modeling — systèmes Stratasys Fortus pour polymères techniques haute performance.",tech_sls_d:"Frittage laser sélectif — géométries complexes et excellentes propriétés mécaniques, sans supports.",tech_fin:"Finition",tech_fin_d:"Sablage, lissage, teinture et peinture biocompatible.",mat_t:"Matériaux",mat_sub:"// une sélection de polymères disponibles",mat_bio:"PC biocompatible",mat_note:"Vous ne trouvez pas le matériau qu'il vous faut ? Parlez-nous de l'application : nous trouvons la solution sur mesure.",mat_btn:"Parler à un technicien",fin_ey:"Post-production",fin_h2:"Rendez vos pièces uniques.",fin_p:"La même pièce traverse nos étapes de finition. Faites défiler et regardez-la passer du brut au laqué.",fin_hint:"faites défiler pour changer de finition",fin_n0:"Brut",fin_n1:"Noir avec apprêts",fin_n2:"Noir",fin_n3:"Noir poli",fin_n4:"Laqué",fin_d0:"La pièce sortie de l'imprimante, avec les lignes de dépôt encore visibles.",fin_d1:"Apprêt et mastic ferment la porosité et préparent la surface.",fin_d2:"Couleur uniforme sur toute la surface de la pièce.",fin_d3:"Lissage progressif jusqu'à une finition lisse et brillante.",fin_d4:"Peinture haut de gamme, biocompatible aussi, prête à l'emploi.",sect_ey:"Secteurs",sect_h2:"Nous fournissons des pièces aux leaders de l'industrie.",sect_1:"Automobile",sect_2:"Aéronautique",sect_3:"Médical",sect_4:"Machines & installations",sect_5:"Design industriel",sect_6:"Robotique",sect_7:"Biens de consommation",blog_ey:"Du blog",blog_h2:"Aperçus depuis notre atelier.",blog1_c:"Post-production",blog1_t:"Techniques de finition de surface : améliorer les pièces imprimées en 3D",blog2_c:"Technologies",blog2_t:"La nouvelle imprimante SLS Formlabs est arrivée à la Digital Factory",blog3_c:"Qualité",blog3_t:"Homogénéité en impression 3D : un facteur clé de qualité",blog_more:"Lire l'article",band_h2:"Un fichier 3D ? On vous dit comment le réaliser.",band_p:"// présentation sur site, visio ou envoi gratuit d'une pièce échantillon — sans engagement",band_btn:"Demander un devis",foot_p:"Design, ingénierie et fabrication additive haute performance. Du projet au prototype : nous donnons forme à votre produit.",foot_tech:"Technologies",foot_sol:"Solutions",foot_comp:"Entreprise",foot_about:"À propos",foot_blog:"Blog",foot_quote:"Devis",foot_contact:"Contact",foot_rights:"Tous droits réservés",foot_privacy:"Confidentialité",foot_cookie:"Cookies",mod_title:"Demander un devis",mod_sub:"Nous avons notre propre parc machines : nous trouvons une solution sur mesure pour chaque application.",mod_c1_t:"J'ai un fichier 3D et je veux un devis",mod_c1_s:"Téléversez un STL/STEP et recevez une estimation",mod_c2_t:"Je veux en savoir plus sur l'offre",mod_c2_s:"Parlez à un technicien, sans engagement",mod_file:"Votre fichier 3D",mod_drop:"Glissez votre fichier ici ou parcourez",mod_drop_s:"STL, STEP, OBJ, 3MF · max 100 Mo",mod_size:"Taille maximale de la pièce",mod_tech:"Technologie",mod_tech_auto:"Conseillez-moi",mod_qty:"Quantité",mod_back:"Retour",mod_continue:"Continuer",mod_name:"Nom et prénom",mod_company:"Entreprise",mod_email:"E-mail",mod_phone:"Téléphone",mod_msg:"Message",mod_msg_ph:"Parlez-nous de votre application...",mod_restart:"Recommencer",mod_send:"Envoyer la demande",mod_done_t:"Demande envoyée !",mod_done_p:"Merci. Notre équipe vous expliquera comment nous travaillons et chiffrons les commandes. Nous vous recontactons sous 24 heures ouvrées.",mod_close:"Fermer",mod_step:"étape {n} / 3",mod_done_lbl:"terminé · 2π",nav_az:"Entreprise",nav_cont:"Contact",az_ey:"Entreprise",az_h2:"Additive People, depuis 2010.",az_p1:"Due Pi Greco s'occupe de design produit, d'ingénierie, de fabrication additive et d'impression 3D de composants industriels. Née en 2010 à Resana (Trévise) de la passion et de l'expérience d'une équipe pluridisciplinaire, avec des systèmes industriels Stratasys et un atelier de 1 300 m².",az_p2:"Depuis 2025, Due Pi Greco fait partie de SolidWorld Group : un nouveau pôle technologique à Resana où fabrication additive, conception et contrôle qualité s'intègrent dans une filière verticale unique.",az_cta:"Lire les actualités",cont_ey:"Contact",cont_h2:"Parlons de votre projet.",cont_p:"Nous sommes à Resana, près de Trévise. Écrivez ou appelez-nous : réponse sous 24 heures ouvrées.",cont_addr:"Adresse",cont_phone_l:"Téléphone",cont_email_l:"E-mail",cont_vat_l:"N° TVA",cont_mail:"Écrivez-nous",blog_all:"Tous les articles",blog2_c:"Actualités",blog2_t:"Due Pi Greco rejoint SolidWorld Group : un nouveau pôle technologique voit le jour",blog3_c:"Matériaux",blog3_t:"PA11 en impression SLS : noir d'origine, biocompatible et vert"}
+   ,es:{nav_serv:"Servicios",nav_tech:"Tecnologías",nav_mat:"Materiales",nav_fin:"Acabado",nav_sol:"Soluciones",nav_sect:"Sectores",nav_blog:"Blog",cta_quote:"Solicitar presupuesto",hero_ey:"Service provider · desde 2010",hero_h1a:"Tus ideas se convierten en",hero_h1b:"piezas funcionales.",hero_lead:"Diseño, ingeniería y fabricación aditiva de alto rendimiento. Del concepto al prototipo, hasta piezas de producción certificadas — todo en nuestra Digital Factory.",hero_cta2:"Explorar tecnologías",st_found:"Fundación",st_factory:"Digital Factory",st_sys:"Sistemas industriales",st_dev:"Desarrollo de producto",trust_lbl:"En lo que confían nuestros clientes",trust_1:"Parque de máquinas propio",trust_2:"Sistemas industriales Stratasys",trust_3:"Materiales certificados · ISO 10993",trust_4:"Taller Industria 4.0",svc_ey:"Qué hacemos",svc_h2:"Un único socio, del dibujo a la pieza acabada.",svc_p:"Una metodología multidisciplinar que integra de forma orgánica todas las fases: diseño, proyecto, ingeniería, prototipado y producción aditiva.",svc1_t:"Diseño industrial y de producto",svc1_d:"Damos forma a soluciones concretas, funcionales y cuidadas, del concepto al aspecto final del producto.",svc2_t:"Ingeniería",svc2_d:"Convertimos el proyecto en una pieza fabricable: análisis funcional, selección de materiales y optimización del proceso.",svc3_t:"DfAM",svc3_d:"Design for Additive Manufacturing: rediseñamos la pieza para aprovechar al máximo la impresión 3D.",svc4_t:"Fabricación aditiva",svc4_d:"Impresión 3D industrial de prototipos y piezas funcionales con sistemas FDM y SLS, en casa.",svc5_t:"Acabado y postproducción",svc5_d:"Granallado, alisado y pintura de alta calidad, también biocompatible, para superficies listas para usar.",svc6_t:"Consultoría técnica",svc6_d:"Te ayudamos a elegir la tecnología, el material y la estrategia de producción más adecuados para tu aplicación.",why_ey:"Por qué Due Pi Greco",why_h2:"Piensa en soluciones. No en obstáculos.",why_p:"Sin costes de puesta en marcha, con alta durabilidad y tiempos de producción rápidos, diseñas las mejores soluciones. No solo las posibles.",why1_t:"Parque de máquinas propio",why1_d:"Las impresoras están en casa: controlamos todo el proceso, de la calidad a los plazos.",why2_t:"Tiempos de producción rápidos",why2_d:"Ciclos de desarrollo cortos sin sacrificar nunca la calidad de la pieza.",why3_t:"Materiales certificados",why3_d:"Funcionales y fiables, hasta polímeros biocompatibles certificados ISO 10993.",why4_t:"Digital Factory 4.0",why4_d:"Un taller en clave Industria 4.0, equipado para acabado y montaje.",why5_t:"Equipo multidisciplinar",why5_d:"Diseñadores, ingenieros y técnicos trabajando juntos en cada proyecto.",why6_t:"Socio OEM a 360°",why6_d:"Te acompañamos en todo el desarrollo del producto, de cero a la pieza final.",sol_ey:"Soluciones",sol_h2:"Lo que podemos hacer por ti.",sol_p:"Descubre cómo la fabricación aditiva responde a necesidades concretas de producto y producción.",sol1:"Prototipado rápido",sol2:"Reducir el time-to-market",sol3:"Piezas funcionales certificadas",sol4:"Geometrías complejas",sol5:"Aligerar las piezas",sol6:"Utillaje y equipos",sol7:"Series pequeñas y medianas",sol8:"Sin costes de puesta en marcha",tm_ey:"Tecnologías y Materiales",tm_h2:"El proceso adecuado para cada aplicación.",tech_t:"Tecnologías",tech_sub:"// procesos de impresión industriales",tech_fdm_d:"Fused Deposition Modeling — sistemas Stratasys Fortus para polímeros técnicos de alto rendimiento.",tech_sls_d:"Sinterizado láser selectivo — geometrías complejas y excelentes propiedades mecánicas, sin soportes.",tech_fin:"Acabado",tech_fin_d:"Granallado, alisado, tintado y pintura biocompatible.",mat_t:"Materiales",mat_sub:"// una selección de polímeros disponibles",mat_bio:"PC biocompatible",mat_note:"¿No encuentras el material que necesitas? Cuéntanos la aplicación: encontramos la solución a medida.",mat_btn:"Habla con un técnico",fin_ey:"Postproducción",fin_h2:"Haz únicas tus piezas.",fin_p:"La misma pieza atraviesa nuestras fases de acabado. Desplázate y velo pasar de bruto a lacado.",fin_hint:"desplázate para cambiar el acabado",fin_n0:"Bruto",fin_n1:"Negro con aditivos",fin_n2:"Negro",fin_n3:"Negro pulido",fin_n4:"Lacado",fin_d0:"La pieza recién salida de la impresora, con las líneas de deposición aún visibles.",fin_d1:"Imprimación y masilla cierran la porosidad y preparan la superficie.",fin_d2:"Color uniforme en toda la superficie de la pieza.",fin_d3:"Alisado progresivo hasta un acabado liso y brillante.",fin_d4:"Pintura de alta calidad, también biocompatible, lista para usar.",sect_ey:"Sectores",sect_h2:"Suministramos piezas a líderes de la industria.",sect_1:"Automoción",sect_2:"Aeroespacial",sect_3:"Médico",sect_4:"Maquinaria e instalaciones",sect_5:"Diseño industrial",sect_6:"Robótica",sect_7:"Bienes de consumo",blog_ey:"Del blog",blog_h2:"Ideas desde nuestro taller.",blog1_c:"Postproducción",blog1_t:"Técnicas de acabado superficial: mejorar las piezas impresas en 3D",blog2_c:"Tecnologías",blog2_t:"La nueva impresora SLS de Formlabs ha llegado a la Digital Factory",blog3_c:"Calidad",blog3_t:"Homogeneidad en la impresión 3D: un factor clave para la calidad",blog_more:"Leer el artículo",band_h2:"¿Tienes un archivo 3D? Te decimos cómo realizarlo.",band_p:"// presentación in situ, videollamada o envío gratuito de una pieza de muestra — sin compromiso",band_btn:"Solicitar presupuesto",foot_p:"Diseño, ingeniería y fabricación aditiva de alto rendimiento. Del proyecto al prototipo: damos forma a tu producto.",foot_tech:"Tecnologías",foot_sol:"Soluciones",foot_comp:"Empresa",foot_about:"Quiénes somos",foot_blog:"Blog",foot_quote:"Presupuesto",foot_contact:"Contacto",foot_rights:"Todos los derechos reservados",foot_privacy:"Privacidad",foot_cookie:"Cookies",mod_title:"Solicitar presupuesto",mod_sub:"Tenemos nuestro propio parque de máquinas: encontramos una solución a medida para cada aplicación.",mod_c1_t:"Tengo un archivo 3D y quiero un presupuesto",mod_c1_s:"Sube un STL/STEP y recibe una valoración",mod_c2_t:"Quiero saber más sobre la oferta",mod_c2_s:"Habla con un técnico, sin compromiso",mod_file:"Tu archivo 3D",mod_drop:"Arrastra tu archivo aquí o examina",mod_drop_s:"STL, STEP, OBJ, 3MF · máx. 100 MB",mod_size:"Tamaño máximo de la pieza",mod_tech:"Tecnología",mod_tech_auto:"Recomiéndame",mod_qty:"Cantidad",mod_back:"Atrás",mod_continue:"Continuar",mod_name:"Nombre y apellidos",mod_company:"Empresa",mod_email:"Correo",mod_phone:"Teléfono",mod_msg:"Mensaje",mod_msg_ph:"Cuéntanos tu aplicación...",mod_restart:"Empezar de nuevo",mod_send:"Enviar solicitud",mod_done_t:"¡Solicitud enviada!",mod_done_p:"Gracias. Nuestro equipo te explicará cómo trabajamos y cómo presupuestamos los pedidos. Te contactamos en menos de 24 horas laborables.",mod_close:"Cerrar",mod_step:"paso {n} / 3",mod_done_lbl:"completado · 2π",nav_az:"Empresa",nav_cont:"Contacto",az_ey:"Empresa",az_h2:"Additive People, desde 2010.",az_p1:"Due Pi Greco se dedica al diseño de producto, ingeniería, fabricación aditiva e impresión 3D de componentes industriales. Nace en 2010 en Resana (Treviso) de la pasión y la experiencia de un equipo multidisciplinar, con sistemas industriales Stratasys y un taller de 1.300 m².",az_p2:"Desde 2025 Due Pi Greco forma parte de SolidWorld Group: un nuevo polo tecnológico en Resana donde fabricación aditiva, diseño y control de calidad se integran en una única cadena vertical.",az_cta:"Leer las novedades",cont_ey:"Contacto",cont_h2:"Hablemos de tu proyecto.",cont_p:"Estamos en Resana, cerca de Treviso. Escríbenos o llámanos: respondemos en 24 horas laborables.",cont_addr:"Dirección",cont_phone_l:"Teléfono",cont_email_l:"Correo",cont_vat_l:"NIF",cont_mail:"Escríbenos",blog_all:"Todos los artículos",blog2_c:"Novedades",blog2_t:"Due Pi Greco se une a SolidWorld Group: nace un nuevo polo tecnológico",blog3_c:"Materiales",blog3_t:"PA11 en impresión SLS: negro de fábrica, biocompatible y ecológico"}
+  };
+  let lang='it';
+  function applyI18N(){const d=I18N[lang]||I18N.it;
+    document.querySelectorAll('[data-i18n]').forEach(el=>{const k=el.getAttribute('data-i18n');if(d[k]!=null)el.textContent=d[k];});
+    document.querySelectorAll('[data-i18n-ph]').forEach(el=>{const k=el.getAttribute('data-i18n-ph');if(d[k]!=null)el.placeholder=d[k];});
+    document.documentElement.lang=lang;}
+  function setLang(code){if(!I18N[code])return;lang=code;applyI18N();
+    document.getElementById('langCode').textContent=code.toUpperCase();
+    document.getElementById('langFlag').innerHTML=FLAGS[code];
+    document.querySelectorAll('#langMenu button').forEach(b=>b.setAttribute('aria-selected',b.dataset.lang===code));
+    if(window.__finRefresh)window.__finRefresh();
+    if(window.__modRefresh)window.__modRefresh();}
+  (function(){const m=document.getElementById('langMenu');
+    m.innerHTML=LANGS.map(function(L){return '<button role="option" data-lang="'+L[0]+'"><span class="flag">'+FLAGS[L[0]]+'</span>'+L[1]+'</button>';}).join('');
+    m.querySelectorAll('button').forEach(b=>b.addEventListener('click',()=>{setLang(b.dataset.lang);closeLang();}));})();
+  const langBtn=document.getElementById('langBtn'), langMenu=document.getElementById('langMenu');
+  function openLang(){langMenu.classList.add('open');langBtn.setAttribute('aria-expanded','true');}
+  function closeLang(){langMenu.classList.remove('open');langBtn.setAttribute('aria-expanded','false');}
+  langBtn.addEventListener('click',e=>{e.stopPropagation();langMenu.classList.contains('open')?closeLang():openLang();});
+  document.addEventListener('click',e=>{if(!e.target.closest('.lang'))closeLang();});
+
+  const header=document.getElementById('header'), sb=document.getElementById('scrollbar');
+  function onScrollUI(){header.classList.toggle('scrolled',window.scrollY>20);const h=document.documentElement.scrollHeight-window.innerHeight;sb.style.width=(h>0?(window.scrollY/h*100):0)+'%';}
+  window.addEventListener('scroll',onScrollUI,{passive:true});onScrollUI();
+
+  const burger=document.getElementById('burger'), mm=document.getElementById('mobileMenu');
+  burger.addEventListener('click',()=>mm.classList.toggle('open'));
+  mm.querySelectorAll('a').forEach(a=>a.addEventListener('click',()=>mm.classList.remove('open')));
+
+  const overlay=document.getElementById('overlay'), progFill=document.getElementById('progFill'), progLabel=document.getElementById('progLabel');
+  const C=2*Math.PI*16; progFill.setAttribute('stroke-dasharray',C); progFill.setAttribute('stroke-dashoffset',C);
+  let curStep=1;
+  function setProgLabel(n){const d=I18N[lang]||I18N.it;progLabel.textContent=n>=4?d.mod_done_lbl:(d.mod_step.replace('{n}',Math.min(n,3)));}
+  window.__modRefresh=()=>setProgLabel(curStep);
+  function openModal(){overlay.classList.add('open');document.body.style.overflow='hidden';goStep(1);}
+  function closeModal(){overlay.classList.remove('open');document.body.style.overflow='';}
+  overlay.addEventListener('click',e=>{if(e.target===overlay)closeModal()});
+  document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal()});
+  function goStep(n){curStep=n;document.querySelectorAll('.step').forEach(s=>s.classList.remove('active'));const el=document.querySelector('.step[data-step="'+n+'"]');if(el)el.classList.add('active');const frac=n>=4?1:(n-1)/3;progFill.setAttribute('stroke-dashoffset',C*(1-frac));setProgLabel(n);}
+  function onFile(input){const dz=document.getElementById('dropzone'),lab=document.getElementById('dropLabel');if(input.files.length){dz.classList.add('filled');lab.textContent=input.files[0].name;}}
+  function pickSize(el,v){document.querySelectorAll('.size-opt').forEach(s=>s.classList.remove('sel'));el.classList.add('sel');window.__qSize=v;}
+  function submitQuote(){
+    const g=id=>{const e=document.getElementById(id);return e&&e.value?e.value.trim():'';};
+    const subj='Richiesta preventivo — Due Pi Greco';
+    const body='Nome: '+g('qName')+'\nAzienda: '+g('qCompany')+'\nEmail: '+g('qEmail')+'\nTelefono: '+g('qPhone')+'\nDimensione max: '+(window.__qSize||'-')+'\nTecnologia: '+g('qTech')+'\nQuantita: '+g('qQty')+'\n\nMessaggio:\n'+g('qMsg');
+    try{window.location.href='mailto:info@duepigreco3d.it?subject='+encodeURIComponent(subj)+'&body='+encodeURIComponent(body);}catch(e){}
+    goStep(4);
+  }
+
+  const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+  function animateCount(el){const target=+el.dataset.count,suf=el.dataset.suffix||'',dur=950,t0=performance.now();if(reduce){el.textContent=target.toLocaleString('it-IT')+suf;return;}function f(t){let p=Math.min(1,(t-t0)/dur);p=1-Math.pow(1-p,3);el.textContent=Math.round(target*p).toLocaleString('it-IT')+suf;if(p<1)requestAnimationFrame(f);}requestAnimationFrame(f);}
+
+  (function(){
+    const stage=document.getElementById('finishStage'), sc=document.getElementById('finishScroll'); if(!stage||!sc)return;
+    const P="M64 56 H252 q16 0 16 16 V150 q0 16 -16 16 H156 V232 q0 16 -16 16 H80 q-16 0 -16 -16 Z";
+    let speck=''; for(let y=66;y<242;y+=17){for(let x=70;x<256;x+=17){const jx=((x*7+y*13)%9)-4,jy=((x*5+y*11)%9)-4,r=((x+y)%3===0)?1.7:1,c=((x*y)%2===0)?'rgba(255,255,255,.13)':'rgba(0,0,0,.22)';speck+='<circle cx="'+(x+jx)+'" cy="'+(y+jy)+'" r="'+r+'" fill="'+c+'"/>';}}
+    const holes='<g><circle cx="108" cy="106" r="14" fill="#0b0c0f"/><circle cx="108" cy="103" r="14" fill="none" stroke="rgba(255,255,255,.07)" stroke-width="2"/><circle cx="212" cy="106" r="14" fill="#0b0c0f"/><circle cx="212" cy="103" r="14" fill="none" stroke="rgba(255,255,255,.07)" stroke-width="2"/><circle cx="108" cy="206" r="12" fill="#0b0c0f"/><circle cx="108" cy="203" r="12" fill="none" stroke="rgba(255,255,255,.07)" stroke-width="2"/></g>';
+    function layerSVG(i){const id='fp'+i,clip='<clipPath id="'+id+'c"><path d="'+P+'"/></clipPath>';let defs='',base='',overlay='',extra='';
+      if(i===0){base='#c9cbc7';defs='<pattern id="'+id+'l" width="7" height="7" patternUnits="userSpaceOnUse"><line x1="0" y1="6.4" x2="7" y2="6.4" stroke="#000" stroke-opacity=".08" stroke-width="1.4"/></pattern>'+clip;overlay='<rect width="320" height="320" fill="url(#'+id+'l)"/>';}
+      else if(i===1){base='#34373d';defs=clip;overlay='<rect width="320" height="320" fill="rgba(0,0,0,.10)"/>'+speck;}
+      else if(i===2){base='#1b1d22';defs='<linearGradient id="'+id+'t" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".06"/><stop offset=".55" stop-color="#fff" stop-opacity="0"/></linearGradient>'+clip;overlay='<rect width="320" height="320" fill="url(#'+id+'t)"/>';}
+      else if(i===3){base='#141619';defs='<linearGradient id="'+id+'g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff" stop-opacity="0"/><stop offset=".42" stop-color="#fff" stop-opacity=".28"/><stop offset=".56" stop-color="#fff" stop-opacity="0"/></linearGradient>'+clip;overlay='<rect width="320" height="320" fill="url(#'+id+'g)"/>';}
+      else{base='url(#'+id+'b)';defs='<radialGradient id="'+id+'b" cx=".42" cy=".34" r=".85"><stop offset="0" stop-color="#34383f"/><stop offset="1" stop-color="#0b0c0f"/></radialGradient><linearGradient id="'+id+'s" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff" stop-opacity="0"/><stop offset=".40" stop-color="#fff" stop-opacity=".55"/><stop offset=".47" stop-color="#fff" stop-opacity="0"/></linearGradient>'+clip;overlay='<rect width="320" height="320" fill="url(#'+id+'s)"/>';extra='<path d="'+P+'" fill="none" style="stroke:var(--accent);stroke-opacity:.55" stroke-width="2"/>';}
+      return '<svg viewBox="0 0 320 320" xmlns="http://www.w3.org/2000/svg"><defs>'+defs+'</defs><path d="'+P+'" fill="'+base+'"/><g clip-path="url(#'+id+'c)">'+overlay+'</g>'+holes+extra+'</svg>';}
+    for(let i=0;i<5;i++){const d=document.createElement('div');d.className='finish-layer';d.innerHTML=layerSVG(i);d.style.opacity=i===0?1:0;stage.appendChild(d);}
+    const layers=[...stage.children];
+    const btns=[...document.querySelectorAll('#finishTrack button')], elName=document.getElementById('finishName'), elDesc=document.getElementById('finishDesc'), elNum=document.getElementById('finishNum');
+    function names(){const d=I18N[lang]||I18N.it;return [d.fin_n0,d.fin_n1,d.fin_n2,d.fin_n3,d.fin_n4];}
+    function descs(){const d=I18N[lang]||I18N.it;return [d.fin_d0,d.fin_d1,d.fin_d2,d.fin_d3,d.fin_d4];}
+    let shown=-1, ticking=false;
+    function update(){ticking=false;const total=sc.offsetHeight-window.innerHeight,top=sc.getBoundingClientRect().top;let p=total>0?(-top)/total:0;p=Math.max(0,Math.min(1,p));const idx=p*4;for(let i=0;i<5;i++)layers[i].style.opacity=Math.max(0,1-Math.abs(i-idx));if(!reduce)stage.style.transform='rotate('+((idx-2)*1.6)+'deg) translateY('+((idx-2)*-3)+'px)';const cur=Math.round(idx);if(cur!==shown){shown=cur;const N=names(),D=descs();elName.textContent=N[cur];elDesc.textContent=D[cur];elNum.textContent=String(cur+1).padStart(2,'0');btns.forEach((b,i)=>b.classList.toggle('active',i===cur));}}
+    window.__finRefresh=()=>{shown=-1;update();};
+    window.addEventListener('scroll',()=>{if(!ticking){ticking=true;requestAnimationFrame(update);}},{passive:true});
+    window.addEventListener('resize',update);update();
+    btns.forEach(b=>b.addEventListener('click',()=>{const i=+b.dataset.i,total=sc.offsetHeight-window.innerHeight,y=window.scrollY+sc.getBoundingClientRect().top+(i/4)*total+2;window.scrollTo({top:y,behavior:reduce?'auto':'smooth'});}));
+  })();
+
+  const io=new IntersectionObserver((es)=>{es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target);}});},{threshold:.12});
+  document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+
+  let initLang=(navigator.language||'it').slice(0,2).toLowerCase(); if(!I18N[initLang])initLang='it';
+  setLang(initLang);
+  function start(){document.body.classList.add('loaded');document.querySelectorAll('[data-count]').forEach(el=>animateCount(el));}
+  if(document.readyState==='complete')start(); else window.addEventListener('load',start);
+</script>
+</body>
+</html>
