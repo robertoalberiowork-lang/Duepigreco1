@@ -8,13 +8,15 @@ Schede applicazione (ALI, CIL, EOAT, FMT) e kit campioni, A4 fronte/retro.
 - `assets/tavola_*.svg` — tavole isometriche vettoriali, estratte dalle schede rev. 00 in `originali/`
   con `tools/extract_illustrations.py` (richiede `pymupdf`).
 - `assets/fonts/` — Archivo, IBM Plex Serif, IBM Plex Mono in locale: la stampa non dipende dalla rete.
-- `pdf/` — le schede pronte.
+- `pdf/` — le schede pronte, più `DPG_Schede_IT.zip` con tutte insieme.
+- `thumbs/` — anteprime delle copertine usate nella sezione Download del sito (`Index.html#download`).
 
 ## Rigenerare i PDF
 
 ```sh
 python3 build.py
 NODE_PATH=$(npm root -g) node tools/print_pdf.js          # --png per le anteprime in preview/
+python3 tools/pack.py                                    # copertine per il sito + ZIP
 ```
 
 Serve Playwright con Chromium. Gli HTML si possono anche aprire nel browser per un controllo a schermo.
