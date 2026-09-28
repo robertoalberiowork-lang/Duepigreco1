@@ -1,0 +1,90 @@
+{
+ "ALI": [
+  {
+   "text": "IMBUTO IN UN PEZZO",
+   "x": 65.26,
+   "y": 5.15
+  },
+  {
+   "text": "CONDOTTO LATTE, CANALE LISCIO",
+   "x": 6.48,
+   "y": 5.15
+  },
+  {
+   "text": "CORNICE DI SCARICO",
+   "x": 6.48,
+   "y": 96.6
+  },
+  {
+   "text": "CONVOGLIATORE",
+   "x": 72.92,
+   "y": 96.6
+  }
+ ],
+ "CIL": [
+  {
+   "text": "TAMBURO A VUOTO IN UN PEZZO",
+   "x": 6.48,
+   "y": 5.15
+  },
+  {
+   "text": "CANALI INTERNI SULLA TESTA",
+   "x": 62.2,
+   "y": 5.15
+  },
+  {
+   "text": "COLLETTORE ROTANTE",
+   "x": 6.48,
+   "y": 96.6
+  },
+  {
+   "text": "RULLO DI DOSAGGIO AD ALVEOLI",
+   "x": 62.2,
+   "y": 96.6
+  }
+ ],
+ "EOAT": [
+  {
+   "text": "DITA DI PRESA",
+   "x": 62.2,
+   "y": 7.51
+  },
+  {
+   "text": "CORPO PINZA CON CANALE VUOTO",
+   "x": 6.48,
+   "y": 7.51
+  },
+  {
+   "text": "NIDO PORTA-PEZZO",
+   "x": 6.48,
+   "y": 98.96
+  },
+  {
+   "text": "PALLET",
+   "x": 74.45,
+   "y": 98.96
+  }
+ ],
+ "FMT": [
+  {
+   "text": "STELLA DI FORMATO",
+   "x": 66.49,
+   "y": 5.15
+  },
+  {
+   "text": "COCLEA A PASSO VARIABILE",
+   "x": 6.48,
+   "y": 5.15
+  },
+  {
+   "text": "GUIDE DI FORMATO",
+   "x": 66.49,
+   "y": 96.6
+  },
+  {
+   "text": "PIASTRA E TAZZE",
+   "x": 6.48,
+   "y": 96.6
+  }
+ ]
+}
