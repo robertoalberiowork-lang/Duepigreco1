@@ -13,7 +13,7 @@ Schede applicazione (ALI, CIL, EOAT, FMT) e kit campioni, A4 fronte/retro.
 
 ## Scheda settore trattamento acque (DPG-SET-H2O)
 
-`h2o.py` genera `html/DPG_Settore_H2O_IT.html` (6 pagine); i disegni vettoriali sono in `h2o_art.py`,
+`h2o.py` genera `html/DPG_Settore_H2O_IT/FR/EN.html` (6 pagine; testi in `h2o_text.py`); i disegni vettoriali sono in `h2o_art.py`,
 gli stili aggiuntivi in `assets/h2o.css`. Fonti e grado di verifica dei dati: `ricerca/H2O_PP_dossier.md`.
 
 ## Rigenerare i PDF

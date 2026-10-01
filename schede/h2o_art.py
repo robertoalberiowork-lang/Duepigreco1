@@ -4,6 +4,20 @@ import math
 
 R, W, G, INK = "#e63329", "#faf9f7", "#1c1c1f", "#0b0b0c"
 H2O = "#5fb4d9"          # solo per l'acqua
+
+# etichette dei disegni: h2o.py le sostituisce per ogni lingua
+LBL = {
+    "c_hole": "Foro da 2 mm a quinconce, anche conico", "c_module": "Modulo sostituibile da solo",
+    "c_clip": "Clip di aggancio stampate nel pezzo", "c_frame": "Telaio e nervatura in un pezzo",
+    "lift": "Sollevamento", "screen": "Grigliatura", "grit": "Dissabbiatura", "prim": "Sedimentazione I",
+    "dose": "Dosaggio", "bio": "Biologico · MBBR", "sec": "Sedimentazione II", "filt": "Filtrazione",
+    "dis": "Disinfezione", "dis_off": "UV / ozono: fuori campo", "odour": "Deodorizzazione",
+    "thick": "Ispessimento", "dewat": "Disidratazione", "dig": "Digestione", "dig_off": "Atex: fuori campo",
+    "sludge": "Linea fanghi",
+    "h_straight": "FORO DRITTO, PUNZONATO", "h_conical": "FORO CONICO, STAMPATO",
+    "h_stuck": "si incastra a metà spessore", "h_pass": "passa, o resta sopra e il lavaggio la stacca",
+    "flow": "FLUSSO", "pitch": "passo", "web": "setto", "plate": "LAMIERA FORATA TIPICA 30–45%", "dec": ",",
+}
 GREY = "#8c8c90"
 C30, S30 = math.cos(math.radians(30)), 0.5
 
@@ -104,10 +118,10 @@ def cover_svg():
     parts, anc = cover_art()
     x0, x1, y0, y1 = -96.0, 318.0, -56.0, 200.0
     vw, vh = x1 - x0, y1 - y0
-    spec = [("Foro da 2 mm a quinconce, anche conico", anc["foro"], (4, 7)),
-            ("Modulo sostituibile da solo", anc["modulo"], (60, 7)),
-            ("Clip di aggancio stampate nel pezzo", anc["clip"], (4, 94)),
-            ("Telaio e nervatura in un pezzo", anc["telaio"], (60, 94))]
+    spec = [(LBL["c_hole"], anc["foro"], (4, 7)),
+            (LBL["c_module"], anc["modulo"], (60, 7)),
+            (LBL["c_clip"], anc["clip"], (4, 94)),
+            (LBL["c_frame"], anc["telaio"], (60, 94))]
     leaders, labels = [], []
     for txt, (ax, ay), (px, py) in spec:
         lx, ly = x0 + vw * px / 100, y0 + vh * py / 100
@@ -143,7 +157,7 @@ def plant_svg():
     # 1 sollevamento
     s.append(f'<path d="M20 {wl-10} V{wl+60} H86 V{wl-10}" {L}/>')
     s.append(f'<rect x="40" y="{wl+30}" width="20" height="22" {Lf}/><path d="M50 {wl+30} V{wl-30} H96" {L}/>')
-    s.append(lbl(53, wl+86, "Sollevamento"))
+    s.append(lbl(53, wl+86, LBL["lift"]))
     # 2 grigliatura
     s.append(f'<path d="M110 {wl+10} V{wl+54} H200 V{wl+10}" {L}/>')
     s.append(f'<path d="M126 {wl+54} L176 {wl-40}" stroke="{R}" stroke-width="2.4" filter="url(#glowM)"/>')
@@ -153,23 +167,23 @@ def plant_svg():
         x = 131 + i * 8
         s.append(f'<path d="M{x-3} {y} h9" stroke="{R}" stroke-width="1"/>')
     s.append(f'<rect x="170" y="{wl-62}" width="36" height="22" {Lf}/>')
-    s.append(lbl(155, wl+86, "Grigliatura"))
+    s.append(lbl(155, wl+86, LBL["screen"]))
     s.append(marker(1, 196, wl-4))
     # 3 dissabbiatura
     s.append(f'<path d="M222 {wl+10} V{wl+48} L240 {wl+66} H282 L300 {wl+48} V{wl+10}" {L}/>')
     s.append(f'<path d="M232 {wl+22} H290" stroke="{W}" stroke-width=".6" stroke-dasharray="3 3"/>')
-    s.append(lbl(261, wl+86, "Dissabbiatura"))
+    s.append(lbl(261, wl+86, LBL["grit"]))
     # 4 primaria
     s.append(f'<path d="M324 {wl+10} V{wl+40} L372 {wl+70} L420 {wl+40} V{wl+10}" {L}/>')
     s.append(f'<path d="M318 {wl+4} H426" stroke="{W}" stroke-width="1.6"/>')
     s.append(f'<path d="M372 {wl+4} V{wl+40} M346 {wl+30} H398" stroke="{W}" stroke-width=".9"/>')
     s.append(f'<rect x="342" y="{wl+26}" width="8" height="6" fill="{R}" filter="url(#glowM)"/><rect x="394" y="{wl+26}" width="8" height="6" fill="{R}" filter="url(#glowM)"/>')
-    s.append(lbl(372, wl+86, "Sedimentazione I"))
+    s.append(lbl(372, wl+86, LBL["prim"]))
     s.append(marker(2, 420, wl-14))
     # dosaggio
     s.append(f'<rect x="424" y="{wl-86}" width="26" height="34" {Lf}/><path d="M437 {wl-52} V{wl+22}" stroke="{W}" stroke-width=".9" stroke-dasharray="2 2"/>')
     s.append(f'<rect x="431" y="{wl+16}" width="12" height="18" fill="{INK}" stroke="{R}" stroke-width="1.4" filter="url(#glowM)"/>')
-    s.append(lbl(437, wl-94, "Dosaggio"))
+    s.append(lbl(437, wl-94, LBL["dose"]))
     s.append(marker(3, 458, wl-60))
     # 5 biologico
     s.append(f'<path d="M466 {wl+2} V{wl+66} H612 V{wl+2}" {L}/>')
@@ -180,14 +194,14 @@ def plant_svg():
             s.append(f'<circle cx="{x+5+(j%2)*3}" cy="{wl+50-j*12}" r="{1.4+j*.4}" fill="none" stroke="{H2O}" stroke-width=".7"/>')
     s.append(f'<rect x="600" y="{wl+14}" width="8" height="40" fill="none" stroke="{R}" stroke-width="1.6" filter="url(#glowM)"/>')
     s.append(f'<path d="M540 {wl-26} V{wl+24}" stroke="{W}" stroke-width=".8"/><rect x="535" y="{wl+24}" width="10" height="14" fill="{INK}" stroke="{R}" stroke-width="1.4" filter="url(#glowM)"/>')
-    s.append(lbl(539, wl+86, "Biologico · MBBR"))
+    s.append(lbl(539, wl+86, LBL["bio"]))
     s.append(marker(4, 458, wl+62))
     s.append(marker(5, 622, wl+8))
     s.append(marker(6, 540, wl-40))
     # 6 secondaria
     s.append(f'<path d="M632 {wl+10} V{wl+40} L680 {wl+70} L728 {wl+40} V{wl+10}" {L}/>')
     s.append(f'<path d="M626 {wl+4} H734" stroke="{W}" stroke-width="1.6"/><path d="M680 {wl+4} V{wl+46}" stroke="{W}" stroke-width=".9"/>')
-    s.append(lbl(680, wl+86, "Sedimentazione II"))
+    s.append(lbl(680, wl+86, LBL["sec"]))
     # 7 terziario
     s.append(f'<path d="M750 {wl-2} V{wl+66} H838 V{wl-2}" {L}/>')
     s.append(f'<path d="M750 {wl+46} H838" stroke="{W}" stroke-width=".9"/>')
@@ -195,14 +209,14 @@ def plant_svg():
     for i in range(7):
         x = 760 + i * 11
         s.append(f'<path d="M{x} {wl+46} v-6 h5 v6" fill="{INK}" stroke="{R}" stroke-width="1.2" filter="url(#glowM)"/>')
-    s.append(lbl(794, wl+86, "Filtrazione"))
+    s.append(lbl(794, wl+86, LBL["filt"]))
     s.append(marker(7, 840, wl-16))
     # 8 disinfezione
     s.append(f'<path d="M858 {wl+10} V{wl+54} H940 V{wl+10}" {L}/>')
     for i in range(4):
         s.append(f'<rect x="{868+i*18}" y="{wl+18}" width="6" height="30" rx="3" fill="none" stroke="{GREY}" stroke-width=".9"/>')
-    s.append(lbl(899, wl+86, "Disinfezione"))
-    s.append(lbl(899, wl+100, "UV / ozono: fuori campo", col="#5c5c61", size=6.2))
+    s.append(lbl(899, wl+86, LBL["dis"]))
+    s.append(lbl(899, wl+100, LBL["dis_off"], col="#5c5c61", size=6.2))
     # uscita
     s.append(f'<path d="M950 {wl+44} q14 -8 28 0 q14 8 28 0" stroke="{H2O}" stroke-width="1.4" fill="none"/>')
     # deodorizzazione (aria dalla grigliatura)
@@ -213,24 +227,24 @@ def plant_svg():
         s.append(f'<path d="M{338+i*6} {wl-156} v4" stroke="{H2O}" stroke-width=".8"/>')
     s.append(f'<path d="M336 {wl-136} H364 M336 {wl-128} H364 M336 {wl-120} H364" stroke="{W}" stroke-width=".5"/>')
     s.append(f'<path d="M350 {wl-176} V{wl-192}" {L}/>')
-    s.append(lbl(350, wl-200, "Deodorizzazione"))
+    s.append(lbl(350, wl-200, LBL["odour"]))
     s.append(marker(8, 384, wl-164))
     # linea fanghi
     fy = wl + 150
     s.append(f'<path d="M372 {wl+70} V{fy} H890" stroke="#b08a5a" stroke-width="1.6" stroke-dasharray="5 3" fill="none" opacity=".8"/>')
     s.append(f'<path d="M680 {wl+70} V{fy}" stroke="#b08a5a" stroke-width="1.6" stroke-dasharray="5 3" fill="none" opacity=".8"/>')
     s.append(f'<path d="M470 {fy-34} V{fy+26} L500 {fy+44} L530 {fy+26} V{fy-34}" {Lf}/>')
-    s.append(lbl(500, fy+64, "Ispessimento"))
+    s.append(lbl(500, fy+64, LBL["thick"]))
     s.append(f'<rect x="596" y="{fy-22}" width="96" height="36" rx="18" {Lf}/>')
     for i in range(4):
         s.append(f'<circle cx="{614+i*20}" cy="{fy-4}" r="7" fill="none" stroke="{W}" stroke-width=".8"/>')
     s.append(f'<path d="M604 {fy-30} H684" stroke="{R}" stroke-width="2" filter="url(#glowM)"/>')
-    s.append(lbl(644, fy+36, "Disidratazione"))
+    s.append(lbl(644, fy+36, LBL["dewat"]))
     s.append(marker(9, 706, fy-34))
     s.append(f'<path d="M790 {fy+30} V{fy-20} Q820 {fy-44} 850 {fy-20} V{fy+30} Z" {Lf}/>')
-    s.append(lbl(820, fy+48, "Digestione"))
-    s.append(lbl(820, fy+62, "Atex: fuori campo", col="#5c5c61", size=6.2))
-    s.append(lbl(440, fy-8, "Linea fanghi", col="#b08a5a", size=6.4, anchor="end"))
+    s.append(lbl(820, fy+48, LBL["dig"]))
+    s.append(lbl(820, fy+62, LBL["dig_off"], col="#5c5c61", size=6.2))
+    s.append(lbl(440, fy-8, LBL["sludge"], col="#b08a5a", size=6.4, anchor="end"))
     # strumentazione ovunque: marker 10 nel canale di grigliatura
     s.append(f'<path d="M262 {wl-40} V{wl+26}" stroke="{W}" stroke-width=".8"/><rect x="257" y="{wl+26}" width="10" height="12" fill="{INK}" stroke="{R}" stroke-width="1.4" filter="url(#glowM)"/>')
     s.append(marker(10, 262, wl-52))
@@ -243,7 +257,7 @@ def hole_section_svg():
     s = []
     def plate(x0, conical):
         out = [f'<text x="{x0+70}" y="14" text-anchor="middle" font-family="IBM Plex Mono" font-size="6.2" letter-spacing="1" fill="{GREY}">'
-               f'{"FORO CONICO, STAMPATO" if conical else "FORO DRITTO, PUNZONATO"}</text>']
+               f'{LBL["h_conical"] if conical else LBL["h_straight"]}</text>']
         top, bot = 58, 82
         holes = [(x0 + 30 + i * 40) for i in range(3)]
         prev = x0
@@ -259,12 +273,12 @@ def hole_section_svg():
         if conical:
             out.append(f'<circle cx="{hx}" cy="{bot+18}" r="5.4" fill="none" stroke="{H2O}" stroke-width="1.2"/>')
             out.append(f'<path d="M{hx} {top-30} V{bot+8}" stroke="{H2O}" stroke-width=".8" stroke-dasharray="2 2"/>')
-            out.append(f'<text x="{x0+70}" y="{bot+42}" text-anchor="middle" font-family="IBM Plex Mono" font-size="5.6" fill="{W}">passa, o resta sopra e il lavaggio la stacca</text>')
+            out.append(f'<text x="{x0+70}" y="{bot+42}" text-anchor="middle" font-family="IBM Plex Mono" font-size="5.6" fill="{W}">{LBL["h_pass"]}</text>')
         else:
             out.append(f'<circle cx="{hx}" cy="{top+8}" r="5.4" fill="none" stroke="{R}" stroke-width="1.2"/>')
-            out.append(f'<text x="{x0+70}" y="{bot+42}" text-anchor="middle" font-family="IBM Plex Mono" font-size="5.6" fill="{W}">si incastra a metà spessore</text>')
+            out.append(f'<text x="{x0+70}" y="{bot+42}" text-anchor="middle" font-family="IBM Plex Mono" font-size="5.6" fill="{W}">{LBL["h_stuck"]}</text>')
         out.append(f'<path d="M{x0+4} {top-22} V{top-6}" stroke="{H2O}" stroke-width="1"/><path d="M{x0+1} {top-10} l3 4 l3 -4" stroke="{H2O}" fill="none"/>')
-        out.append(f'<text x="{x0+10}" y="{top-14}" font-family="IBM Plex Mono" font-size="5.8" fill="{GREY}">FLUSSO</text>')
+        out.append(f'<text x="{x0+10}" y="{top-14}" font-family="IBM Plex Mono" font-size="5.8" fill="{GREY}">{LBL["flow"]}</text>')
         return "".join(out)
     s.append(plate(4, False))
     s.append(plate(172, True))
@@ -287,11 +301,11 @@ def open_area_svg():
     x0, w = 104, 200
     # banda della lamiera inox tipica 30–45%
     s.append(f'<rect x="{x0 + w*.30:.1f}" y="4" width="{w*.15:.1f}" height="{len(rows)*22+4}" fill="{W}" opacity=".06"/>')
-    s.append(f'<text x="{x0 + w*.375:.1f}" y="{len(rows)*22+18}" text-anchor="middle" font-family="IBM Plex Mono" font-size="6" fill="{GREY}">LAMIERA FORATA TIPICA 30–45%</text>')
+    s.append(f'<text x="{x0 + w*.375:.1f}" y="{len(rows)*22+18}" text-anchor="middle" font-family="IBM Plex Mono" font-size="6" fill="{GREY}">{LBL["plate"]}</text>')
     for i, (p, lig, oa) in enumerate(rows):
         y = 8 + i * 22
-        s.append(f'<text x="0" y="{y+9}" font-family="IBM Plex Mono" font-size="7" fill="{W}">passo {str(p).replace(".", ",")} mm</text>')
-        s.append(f'<text x="0" y="{y+17}" font-family="IBM Plex Mono" font-size="5.8" fill="{GREY}">setto {str(lig).replace(".", ",")} mm</text>')
+        s.append(f'<text x="0" y="{y+9}" font-family="IBM Plex Mono" font-size="7" fill="{W}">{LBL["pitch"]} {str(p).replace(".", LBL["dec"])} mm</text>')
+        s.append(f'<text x="0" y="{y+17}" font-family="IBM Plex Mono" font-size="5.8" fill="{GREY}">{LBL["web"]} {str(lig).replace(".", LBL["dec"])} mm</text>')
         s.append(f'<rect x="{x0}" y="{y+2}" width="{w}" height="12" fill="#1c1c1f"/>')
         s.append(f'<rect x="{x0}" y="{y+2}" width="{w*oa/100:.1f}" height="12" fill="{R}"/>')
         s.append(f'<text x="{x0 + w*oa/100 + 4:.1f}" y="{y+11}" font-family="IBM Plex Mono" font-size="7" font-weight="600" fill="{W}">{oa:.0f}%</text>')
